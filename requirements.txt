@@ -1,0 +1,4 @@
+openai~=1.14.3
+pypdf2~=3.0.1
+flask~=3.0.2
+python-dotenv~=1.0.1
