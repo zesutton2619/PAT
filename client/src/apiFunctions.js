@@ -1,4 +1,7 @@
+import {handleInputChange} from "./components/SubmitNResults"
+
 let chatMessages = []; // State to hold chat messages
+
 
 export const sendMessage = async (message) => {
     if (message.trim() !== "") {
@@ -66,7 +69,7 @@ export const uploadPatent = async (file) => {
     }
 };
 
-export const comparePatents = async () => {
+export const comparePatents = async (setPercentage) => {
     try {
         // Make a GET request to the Flask route
         const response = await fetch('http://localhost:5000/calculate-similarities', {
@@ -79,7 +82,10 @@ export const comparePatents = async () => {
         if (response.ok) {
             // Parse the response data
             const similarities = await response.json();
-            console.log("Similarities:", similarities);
+            const similarityPercentage = Math.round(similarities[0][1] * 100);
+            console.log("Similarity Percentage:", similarityPercentage);
+            setPercentage(similarityPercentage);
+
             // Optionally, perform any further actions with the data
         } else {
             console.error('Failed to fetch similarities:', response.statusText);
@@ -87,6 +93,8 @@ export const comparePatents = async () => {
     } catch (error) {
         console.error('Error fetching similarities:', error);
     }
+
+    return setPercentage
 };
 
 export const startChat = async (event) => {
