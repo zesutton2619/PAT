@@ -4,14 +4,33 @@ import nltk
 from nltk.corpus import stopwords
 import PyPDF2
 
+
 class PatentProcessor:
     def __init__(self):
         # Initialize TF-IDF vectorizer with consistent parameters
         self.vectorizer = TfidfVectorizer(stop_words=stopwords.words('english'))
         self.documents = None
         self.reference_vector = None
+        self.reference_patent = None
 
-    def process_pdf(self, file_name):
+    def vectorize_documents(self, documents):
+        # Fit the vectorizer on all documents to learn vocabulary
+        self.documents = documents
+        self.vectorizer.fit(documents)
+        # Transform documents to TF-IDF vectors
+        tfidf_vectors = self.vectorizer.transform(documents)
+        return tfidf_vectors
+
+    def set_reference_patent(self):
+        # Process the specified patent and set its TF-IDF vector as the reference
+        patent_text = self.process_pdf(self.reference_patent)
+        self.reference_vector = self.vectorizer.transform([patent_text])
+
+    def set_reference_patent_filename(self, filename):
+        self.reference_patent = filename
+
+    @staticmethod
+    def process_pdf(file_name):
         patent_text = ""
         with open(file_name, "rb") as file:
             # Create a PDF reader object
@@ -28,24 +47,8 @@ class PatentProcessor:
 
         return preprocessed_text
 
-    def vectorize_documents(self, documents):
-        # Fit the vectorizer on all documents to learn vocabulary
-        self.documents = documents
-        self.vectorizer.fit(documents)
-        # Transform documents to TF-IDF vectors
-        tfidf_vectors = self.vectorizer.transform(documents)
-        return tfidf_vectors
-
-    def set_reference_patent(self, filename):
-        # Process the specified patent and set its TF-IDF vector as the reference
-        patent_text = self.process_pdf(filename)
-        self.reference_vector = self.vectorizer.transform([patent_text])
-
-    def pdfs_in_directory(self, input_dir):
+    @staticmethod
+    def get_patent_list(input_dir):
         # Get a list of all PDF files in the input directory
         pdf_files = [os.path.join(input_dir, file) for file in os.listdir(input_dir) if file.endswith('.pdf')]
-
-        # Create a list of dictionaries containing file information
-        patent_files = [{"filename": file} for file in pdf_files]
-
-        return patent_files
+        return pdf_files

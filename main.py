@@ -1,77 +1,97 @@
 import os
 import time
-import json
-from dotenv import load_dotenv
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from openai import OpenAI
 from patentProcessing import PatentProcessor
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+from pat import PAT
 
-
-# class Backend:
-#     def __init__(self):
-#         load_dotenv()
-#         openai_api_key = os.getenv('ZACH_OPENAI_API_KEY')
-#         self.client = OpenAI(api_key=openai_api_key)
-#         self.patent_ids = {"Utility": "asst_Xqr6xGeJg7EWx9TxFklh9Dbp",
-#                            "Test": "asst_Yfd4Esowv7T9nmuRaeCtVDFv"}
-#
-#     def upload_file(self, patent_file_path):
-#         file = self.client.files.create(
-#             file=open(patent_file_path, "rb"),
-#             purpose='assistants'
-#         )
-#         return file
-#
-#     def generate_response(self, patent_file_path):
-#         # file = self.upload_file(patent_file_path)
-#         thread = self.client.beta.threads.create()
-#         thread_id = thread.id
-#         self.client.beta.threads.messages.create(
-#             thread_id=thread_id,
-#             role="user",
-#             content="There are three patents in the file I gave you, What are the names of these three patents?",
-#             # file_ids=[file.id]
-#         )
-#         new_message = self.run_assistant(thread)
-#         return new_message
-#
-#     def run_assistant(self, thread):
-#         assistant_id = self.patent_ids["Test"]
-#         assistant = self.client.beta.assistants.retrieve(assistant_id)
-#
-#         run = self.client.beta.threads.runs.create(
-#             thread_id=thread.id,
-#             assistant_id=assistant.id
-#         )
-#
-#         while run.status != "completed":
-#             time.sleep(0.5)
-#             run = self.client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
-#
-#         messages = self.client.beta.threads.messages.list(thread_id=thread.id)
-#         message = messages.data[0].content[0].text.value
-#
-#         return message
-
-
+app = Flask(__name__)
+CORS(app)
 patent_processor = PatentProcessor()
-patent_files = patent_processor.pdfs_in_directory("Utility Patents")
-
-# Process each patent and store preprocessed text
-preprocessed_texts = [patent_processor.process_pdf(file_info["filename"]) for file_info in patent_files]
-
-# Vectorize the preprocessed texts
-tfidf_vectors = patent_processor.vectorize_documents(preprocessed_texts)
-
-patent_processor.set_reference_patent("US_11942209_B2_I.pdf")
-
-# Calculate similarities
-similarities = []
-for tfidf_vector in tfidf_vectors:
-    similarity = cosine_similarity(patent_processor.reference_vector, tfidf_vector)[0][0]
-    similarities.append(similarity)
-
-print(similarities)
+pat_chat = PAT()
 
 
+@app.route('/calculate-similarities', methods=['GET'])
+def calculate_similarities():
+    start_time = time.time()  # Start the timer
+    patent_list = patent_processor.get_patent_list("Utility Patents")
+    preprocessed_texts = []
+
+    # Process PDFs and collect preprocessed texts
+    for filename in patent_list:
+        preprocessed_text = patent_processor.process_pdf(filename)
+        preprocessed_texts.append(preprocessed_text)
+
+    # Vectorize documents and set reference patent
+    tfidf_vectors = patent_processor.vectorize_documents(preprocessed_texts)
+    patent_processor.set_reference_patent()
+
+    similarities = []
+    filenames = []  # List to store filenames
+
+    # Calculate similarities
+    for tfidf_vector, filename in zip(tfidf_vectors, patent_list):
+        similarity = cosine_similarity(patent_processor.reference_vector, tfidf_vector)[0][0]
+        similarities.append(similarity)
+        filenames.append((filename, similarity))  # Store filename along with similarity
+
+    # Sort based on similarity scores
+    similarity_results = sorted(filenames, key=lambda x: x[1], reverse=True)
+
+    # Extract top 5 filenames and similarity scores
+    top_5_results = similarity_results[:5]
+
+    # Print for debugging
+
+    # Stop the timer
+    end_time = time.time()
+    elapsed_time = end_time - start_time  # Calculate elapsed time
+
+    # Print elapsed time for debugging
+    print("Elapsed Time:", elapsed_time)
+
+    print(similarities)
+    print(top_5_results)
+    pat_chat.set_patent_files(top_5_results)
+
+    # Return top 5 results
+    return jsonify(top_5_results)
+
+
+@app.route('/upload_patent', methods=['POST'])
+def upload_patent():
+    if 'file' not in request.files:
+        return 'No file part', 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return 'No selected file', 400
+
+    # Process the file here, for example, save it to a specific directory
+    file.save('uploads/' + file.filename)
+    patent_processor.set_reference_patent_filename('uploads/' + file.filename)
+
+    return 'File uploaded successfully', 200
+
+
+@app.route('/start_chat')
+def start_chat():
+    print("chat started")
+    pat_chat.set_chat_id()
+    pat_chat.upload_files()
+
+
+@app.route('/send_message', methods=['POST'])
+def send_message():
+    response = ""
+    if request.method == 'POST':
+        message = request.json.get('message')
+        print("Message received: ", message)
+        response = pat_chat.generate_response(message)
+    return response, 200
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
