@@ -10,6 +10,7 @@ const Init = () => {
         <PatentCategoryDropdown />
         <OrthopedicCategorySelect />
       </div>
-    );  };
+    );  
+}
 
 export default Init;
