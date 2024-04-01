@@ -53,7 +53,7 @@ def calculate_similarities():
 
     print(similarities)
     print(top_5_results)
-    pat_chat.set_patent_files(top_5_results)
+    pat_chat.set_patent_files(top_5_results, patent_processor.reference_patent)
 
     # Return top 5 results
     return jsonify(top_5_results)
@@ -78,9 +78,13 @@ def upload_patent():
 
 @app.route('/start_chat')
 def start_chat():
-    print("chat started")
-    pat_chat.set_chat_id()
-    pat_chat.upload_files()
+    try:
+        print("Chat started")
+        pat_chat.set_chat_id()
+        pat_chat.upload_files()
+        return "Chat started successfully"
+    except Exception as e:
+        return str(e), 500  # Return error message and status code 500 if an error occurs
 
 
 @app.route('/send_message', methods=['POST'])
@@ -90,6 +94,7 @@ def send_message():
         message = request.json.get('message')
         print("Message received: ", message)
         response = pat_chat.generate_response(message)
+        print("Response: ", response)
     return response, 200
 
 
