@@ -3,7 +3,7 @@ import { useState } from "react";
 import {PATBuddy} from "./submitNResultsSubComponent/PATBuddy";
 import { Results } from "./submitNResultsSubComponent/Results";
 import { SubmitButton } from "./submitNResultsSubComponent/SubmitButton";
-
+import { sendMessage, comparePatents, startChat, handleSubmit } from "../apiFunctions";
 
 const SubmitNResults = () => {
     const [percentage, setPercentage] = useState(0);
@@ -28,9 +28,14 @@ const SubmitNResults = () => {
     const handleTextChange = event => {
       setText(event.target.value);
     };
+
+    function handleButtonClick() {
+        handleSubmit();
+        comparePatents();
+    }
   
     return (
-      <div className="flex flex-col items-center justify-center h-screen">
+      <div className="flex flex-col items-center h-screen mt-10">
         {isLoading ? (
           <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
         ) : (
@@ -68,7 +73,7 @@ const SubmitNResults = () => {
             className="border border-gray-300 rounded-lg px-4 py-2"
           />
           <button
-            onClick={handleSubmit}
+            onClick={handleButtonClick}
             className="ml-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
             Submit
