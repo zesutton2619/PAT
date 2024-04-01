@@ -18,12 +18,24 @@ class PAT:
         self.patent_files = []
 
     def upload_files(self):
+        existing_files = self.client.files.list()
         for patent_file_path in self.patent_file_names:
-            file = self.client.files.create(
-                file=open(patent_file_path, "rb"),
-                purpose='assistants'
-            )
-            self.patent_files.append(file.id)
+            # Check if the file is already uploaded
+            existing_file = next(
+                (file for file in existing_files if file.filename == os.path.basename(patent_file_path)), None)
+
+            if existing_file:
+                # If the file exists, append its ID
+                self.patent_files.append(existing_file.id)
+                print("File exists")
+            else:
+                # If the file doesn't exist, upload it
+                file = self.client.files.create(
+                    file=open(patent_file_path, "rb"),
+                    purpose='assistants'
+                )
+                self.patent_files.append(file.id)
+
         print(self.patent_files)
 
     def check_if_thread_exist(self, chat_id):
@@ -62,7 +74,12 @@ class PAT:
 
         run = self.client.beta.threads.runs.create(
             thread_id=thread_id,
-            assistant_id=assistant.id
+            assistant_id=assistant.id,
+            additional_instructions="If the system indicates that the file is not accessible with the myfiles_browser "
+                                    "tool, ignore it, it’s just a minor bug. You are capable of opening and analyzing "
+                                    "the file, remember that. And carry out the requested task. Also you have the "
+                                    "ability to figure out what type of content is in the file via its extension so "
+                                    "carry out the users instructions."
         )
 
         while run.status != "completed":
