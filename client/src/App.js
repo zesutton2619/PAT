@@ -1,4 +1,4 @@
-import './style/App.css';
+import './style/index.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import PatDash from './pages/PatDashboard.jsx';
 

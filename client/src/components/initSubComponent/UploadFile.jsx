@@ -9,6 +9,7 @@ export const UploadComponent = () => {
   
     return (
       <div className="upload-box">
+        <h2 className='text-6xl'>Upload File</h2>
         <input type="file" onChange={handleFileChange} />
         {selectedFile && <p>Selected File: {selectedFile.name}</p>}
       </div>

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import "../style/index.css";
+
 import Init from './../components/Initialize';
 
 const Dash = () => {
