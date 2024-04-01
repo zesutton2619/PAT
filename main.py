@@ -39,8 +39,8 @@ def calculate_similarities():
     # Sort based on similarity scores
     similarity_results = sorted(filenames, key=lambda x: x[1], reverse=True)
 
-    # Extract top 5 filenames and similarity scores
-    top_5_results = similarity_results[:5]
+    # Extract top result
+    top_result = similarity_results[0] if similarity_results else None
 
     # Print for debugging
 
@@ -52,11 +52,11 @@ def calculate_similarities():
     print("Elapsed Time:", elapsed_time)
 
     print(similarities)
-    print(top_5_results)
-    pat_chat.set_patent_files(top_5_results, patent_processor.reference_patent)
+    print(top_result)
+    pat_chat.set_patent_files([top_result], patent_processor.reference_patent)
 
-    # Return top 5 results
-    return jsonify(top_5_results)
+    # Return top result
+    return jsonify(top_result)
 
 
 @app.route('/upload_patent', methods=['POST'])
