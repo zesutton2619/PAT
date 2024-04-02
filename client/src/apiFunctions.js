@@ -1,7 +1,23 @@
-import {handleInputChange} from "./components/SubmitNResults"
+import JSZip from "jszip";
 
 let chatMessages = []; // State to hold chat messages
 
+
+export const unzipFile = async (zipFile) => {
+    const zip = await JSZip.loadAsync(zipFile);
+    const patents = [];
+
+    for (const filename of Object.keys(zip.files)) {
+        const file = zip.files[filename];
+        if (!file.dir) {
+            const fileBlob = await file.async('blob');
+            const fileObject = new File([fileBlob], filename);
+            patents.push(fileObject);
+        }
+    }
+
+    return patents;
+};
 
 export const sendMessage = async (message) => {
     if (message.trim() !== "") {
@@ -98,6 +114,35 @@ export const comparePatents = async () => {
         return null;
     }
 };
+
+export const retrievePatents = async () => {
+    try {
+        const response = await fetch('http://localhost:5000/retrieve_patents', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            // Parse the response data
+            const blob = await response.blob();
+            const castedBlob = new Blob(blob);
+            // Do something with the Blob, e.g., create a download link
+            const downloadUrl = window.URL.createObjectURL(castedBlob);
+            // Trigger a download or handle the Blob as needed
+            window.open(downloadUrl);
+        } else {
+            console.error('Failed to retrieve patents:', response.statusText);
+            // If an error occurs, you might want to return a default value or handle the error differently
+            return null;
+        }
+    } catch (error) {
+        console.error('Error retrieving patents:', error);
+        return null;
+    }
+};
+
 
 
 export const startChat = async (event) => {
