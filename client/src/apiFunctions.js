@@ -69,7 +69,7 @@ export const uploadPatent = async (file) => {
     }
 };
 
-export const comparePatents = async (setPercentage) => {
+export const comparePatents = async () => {
     try {
         // Make a GET request to the Flask route
         const response = await fetch('http://localhost:5000/calculate-similarities', {
@@ -82,20 +82,23 @@ export const comparePatents = async (setPercentage) => {
         if (response.ok) {
             // Parse the response data
             const similarities = await response.json();
-            const similarityPercentage = Math.round(similarities[0][1] * 100);
+            const similarityPercentage = Math.round(similarities[1] * 100); // Access the second element of the tuple
             console.log("Similarity Percentage:", similarityPercentage);
-            setPercentage(similarityPercentage);
 
-            // Optionally, perform any further actions with the data
+            // Return the similarity percentage
+            return similarityPercentage;
         } else {
             console.error('Failed to fetch similarities:', response.statusText);
+            // If an error occurs, you might want to return a default value or handle the error differently
+            return null;
         }
     } catch (error) {
         console.error('Error fetching similarities:', error);
+        // If an error occurs, you might want to return a default value or handle the error differently
+        return null;
     }
-
-    return setPercentage
 };
+
 
 export const startChat = async (event) => {
     console.log("Chat started")

@@ -1,16 +1,9 @@
-// ./initSubComponent/UploadFile.jsx
-import React, { useState } from "react";
-import {comparePatents} from "../../apiFunctions";
+import React from "react";
 
-export const UploadComponent = () => {
-    const [selectedFile, setSelectedFile] = useState(null);
-
+export const UploadComponent = ({ onFileSelect, selectedFile }) => {
     const handleFileChange = (event) => {
-        setSelectedFile(event.target.files[0]);
-    };
-
-    const submiFile = (event) => {
-      comparePatents()
+        const file = event.target.files[0];
+        onFileSelect(file);
     };
 
     return (
