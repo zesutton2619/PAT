@@ -8,8 +8,8 @@ export const OrthopedicCategorySelect = () => {
     };
 
     return (
-        <div className="relative w-full md:w-64 mt-2">
-            <label htmlFor="orthopedicCategory" className="block text-lg font-medium text-gray-700">Orthopedic Category</label>
+        <div className="relative w-full md:w-64 mt-5">
+            <label htmlFor="orthopedicCategory" className=" font-bold block text-lg text-gray-700">Orthopedic Category</label>
             <div className="mt-1 relative rounded-md shadow-sm">
                 <select
                     id="orthopedicCategory"
