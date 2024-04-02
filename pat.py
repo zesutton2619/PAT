@@ -36,7 +36,7 @@ class PAT:
                 )
                 self.patent_files.append(file.id)
 
-        print(self.patent_files)
+        print("uploading files", self.patent_files)
 
     def check_if_thread_exist(self, chat_id):
         with self.lock:
@@ -55,9 +55,20 @@ class PAT:
                 conn.commit()
                 return thread_id
 
-    def generate_response(self, message_body):
+    def generate_response(self, message_body, percentage):
         # Assuming self.chat_id is set somewhere before calling generate_response
         thread_id = self.check_if_thread_exist(self.chat_id)
+
+        print("Message Body: ", message_body)
+        print("Percentage: ", percentage)
+        print("Patent_files: ", self.patent_files)
+
+        if message_body == "Started Conversation from Compare with percentage" and percentage is not None:
+            message_body = (f"{self.patent_files[0]} is the patent the user provided. "
+                            f"Percentage similarity: {percentage}. "
+                            f"{self.patent_files[1]} is the patent the user provided patent was compared to."
+                            f"Comment on why these patents are only this similar. "
+                            f"Please keep the response short and concise")
 
         self.client.beta.threads.messages.create(
             thread_id=thread_id,
@@ -100,7 +111,7 @@ class PAT:
         for patent in patent_files:
             self.patent_file_names.append(patent[0])
 
-    def get_patent_fies(self):
+    def get_patent_file_names(self):
         return self.patent_file_names
 
     def reset_patent_filenames(self):

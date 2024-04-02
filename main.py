@@ -17,7 +17,7 @@ pat_chat = PAT()
 def retrieve_patents():
     try:
         # Get the filenames of the PDF files from pat_chat.patent_file_names
-        filenames = pat_chat.get_patent_fies()
+        filenames = pat_chat.get_patent_file_names()
         print(filenames)
 
         if not filenames:
@@ -39,8 +39,6 @@ def retrieve_patents():
         with zipfile.ZipFile(zip_filename, 'w', compression=zipfile.ZIP_STORED) as zipf:
             for file_path in file_paths:
                 zipf.write(file_path, os.path.basename(file_path))
-
-        pat_chat.reset_patent_filenames()
 
         # Send the zip file as an attachment
         return send_file(zip_filename, as_attachment=True, mimetype='application/zip')
@@ -99,6 +97,7 @@ def calculate_similarities():
 
 @app.route('/upload_patent', methods=['POST'])
 def upload_patent():
+    pat_chat.reset_patent_filenames()
     if 'file' not in request.files:
         return 'No file part', 400
 
@@ -130,8 +129,9 @@ def send_message():
     response = ""
     if request.method == 'POST':
         message = request.json.get('message')
+        percentage = request.json.get('percentage')
         print("Message received: ", message)
-        response = pat_chat.generate_response(message)
+        response = pat_chat.generate_response(message, percentage)
         print("Response: ", response)
     return response, 200
 
