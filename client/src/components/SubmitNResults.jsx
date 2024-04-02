@@ -49,7 +49,7 @@ const SubmitNResults = ({ selectedFile }) => {
                 const blob = await response.blob();
                 const zipFile = new File([blob], 'patents.zip', { type: 'application/zip' });
                 const patents = await unzipFile(zipFile);
-                setPatents(patents);
+                setPatents(patents); // Set the patents state with the retrieved patents
             } else {
                 console.error('Failed to retrieve patents:', response.statusText);
             }
@@ -59,6 +59,7 @@ const SubmitNResults = ({ selectedFile }) => {
             console.error("No file selected");
         }
     };
+
 
 
     return (
@@ -134,12 +135,11 @@ const SubmitNResults = ({ selectedFile }) => {
                             </ul>
                         </div>
                     </div>
-
-                    <Display patents={patents} />
                 </div>
             )}
 
             <div className="mt-8 flex items-center mt-5">
+                <Display patents={patents} />
                 <input
                     type="text"
                     value={text}

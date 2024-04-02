@@ -1,24 +1,22 @@
-import { useState } from "react";
+import React from 'react';
+import PDFViewer from './PDFViewer'; // Assuming PDFViewer is a component that renders PDF
 
-import {SelectedFile} from "./patentDisplaySubComponent/SelectedFile";
-import {SimilarFiles} from "./patentDisplaySubComponent/SimilarFiles";
-
-const Display = ({patents}) => {
+const Display = ({ patents }) => {
     return (
         <div>
-            <h2>Patent Display</h2>
-            <div className="patents-container">
+            <h2 className="text-2xl font-bold mb-4">Patent Display</h2>
+            <div className="patents-container grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {patents.map((patent, index) => (
-                    <div key={index} className="patent-card">
-                        <h3>{patent.name}</h3>
-                        {/* Render other details of the patent as needed */}
-                        <embed src={URL.createObjectURL(patent)} width="500" height="500" type="application/pdf"/>
+                    <div key={index} className="w-full patent-card p-4 border rounded-lg">
+                        <h3 className="text-lg font-semibold mb-2">{patent.name}</h3>
+                        <div className="pdf-container border border-gray-300 rounded-lg p-2 overflow-auto">
+                            <PDFViewer pdfUrl={URL.createObjectURL(patent)} />
+                        </div>
                     </div>
                 ))}
             </div>
         </div>
-    )
-}
-
+    );
+};
 
 export default Display;

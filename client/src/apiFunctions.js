@@ -125,13 +125,7 @@ export const retrievePatents = async () => {
         });
 
         if (response.ok) {
-            // Parse the response data
-            const blob = await response.blob();
-            const castedBlob = new Blob(blob);
-            // Do something with the Blob, e.g., create a download link
-            const downloadUrl = window.URL.createObjectURL(castedBlob);
-            // Trigger a download or handle the Blob as needed
-            window.open(downloadUrl);
+            return response
         } else {
             console.error('Failed to retrieve patents:', response.statusText);
             // If an error occurs, you might want to return a default value or handle the error differently
@@ -142,7 +136,6 @@ export const retrievePatents = async () => {
         return null;
     }
 };
-
 
 
 export const startChat = async (event) => {
