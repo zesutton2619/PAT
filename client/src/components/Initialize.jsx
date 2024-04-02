@@ -14,7 +14,7 @@ const Init = ({ onFileSelect }) => {
     return (
         <div className="flex justify-center items-center mt-7">
             <div className="container flex flex-col items-center">
-                <div className="flex items-start">
+                <div className="flex items-start ">
                     <UploadComponent onFileSelect={handleFileSelect} selectedFile={selectedFile} />
                     <div className="flex items-start ml-20 p-5 flex-col  bg-white shadow-md rounded-lg overflow-hidden">
 

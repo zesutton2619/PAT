@@ -57,8 +57,16 @@ const Dash = () => {
             </nav>
 
 
-            <Init onFileSelect={handleFileSelect} />
-            <SubmitNResults selectedFile={selectedFile} />
+            <div className="flex">
+                <div className="flex-grow h-100 mt-10">
+                    <Init onFileSelect={handleFileSelect}/>
+                    <SubmitNResults selectedFile={selectedFile}/>
+                </div>
+                <div className="flex-grow">
+                </div>
+                <div className="flex-grow">
+                </div>
+            </div>
 
 
             <div
