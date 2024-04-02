@@ -9,7 +9,7 @@ export const PatentCategoryDropdown = () => {
 
     return (
         <div className="relative w-full md:w-64 mt-2 ">
-            <label htmlFor="category" className="block text-lg font-medium text-gray-700">Patent Category</label>
+            <label htmlFor="category" className="block text-lg font-bold text-gray-700">Patent Category</label>
             <div className="mt-1 relative rounded-md shadow-sm">
                 <select
                     id="category"

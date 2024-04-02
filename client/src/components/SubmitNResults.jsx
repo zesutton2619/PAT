@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { comparePatents } from "../apiFunctions";
 import robotIcon from '../images/robot-solid.svg'; // Adjust the path based on your directory structure
-
+import "./../style/index.css"
 
 
 const SubmitNResults = () => {
@@ -14,6 +14,10 @@ const SubmitNResults = () => {
     const handleFileSelect = (file) => {
         setSelectedFile(file);
     };
+
+    useEffect(() => {
+        setText("Hello, I am PAT! Upload your File.");
+    }, []);
 
     const handleSubmit = async () => {
         setIsLoading(true);
@@ -47,10 +51,10 @@ const SubmitNResults = () => {
                 <div className="relative flex items-center">
                     <div
                         className="bg-gray-200 rounded-full h-40 w-40 flex items-center justify-center text-5xl font-bold text-gray-800 mr-8"
-
                     >
                         {percentage}%
                     </div>
+
 
 
                     <div className="flex items-start gap-2.5">
@@ -62,8 +66,9 @@ const SubmitNResults = () => {
                                     className="text-sm font-semibold text-gray-900 dark:text-white">PAT</span>
                                 <span className="text-sm font-normal text-gray-500 dark:text-gray-400">11:46</span>
                             </div>
-                            <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">The Patents are not similar, they have many differences</p>
-                            <span className="text-sm font-normal text-gray-500 dark:text-gray-400">Delivered</span>
+                            <p className={`text-sm font-normal py-2.5 text-gray-900 dark:text-white ${text && 'typing-animation'} whitespace-normal`}>{text}</p>
+
+
                         </div>
                         <button id="dropdownMenuIconButton" data-dropdown-toggle="dropdownDots"
                                 data-dropdown-placement="bottom-start"
@@ -102,15 +107,12 @@ const SubmitNResults = () => {
                             </ul>
                         </div>
                     </div>
-
-
                 </div>
             )}
 
             <div className="mt-8 flex items-center mt-5">
                 <input
                     type="text"
-                    value={text}
                     onChange={handleTextChange}
                     placeholder="Talk to PAT"
                     className="border border-gray-300 rounded-lg px-4 py-2"

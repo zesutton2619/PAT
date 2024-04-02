@@ -9,7 +9,7 @@ const Init = () => {
             <div className="container flex flex-col items-center">
                 <div className="flex items-start">
                     <UploadComponent />
-                    <div className="mt-5 ml-20 flex flex-col items-center">
+                    <div className="flex items-start ml-20 p-5 flex-col  bg-white shadow-md rounded-lg overflow-hidden">
 
                         <PatentCategoryDropdown />
 
