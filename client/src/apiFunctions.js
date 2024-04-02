@@ -19,32 +19,6 @@ export const unzipFile = async (zipFile) => {
     return patents;
 };
 
-export const sendMessage = async (message) => {
-    if (message.trim() !== "") {
-        try {
-            const response = await fetch('http://localhost:5000/send_message', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ message }) // Send the message in JSON format
-            });
-
-            if (response.ok) {
-                console.log("Message Received:", response);
-                // Extract the response data as text
-                return await response.text(); // Return the received message
-            } else {
-                console.log("Message not received.");
-                return null; // Return null if message not received
-            }
-        } catch (error) {
-            console.log("Error receiving message:", error);
-            return null; // Return null if error occurs
-        }
-    }
-};
-
 // Function to handle form submission
 export const handleSubmit = async (event) => {
     event.preventDefault();
@@ -138,6 +112,48 @@ export const retrievePatents = async () => {
 };
 
 
-export const startChat = async (event) => {
-    console.log("Chat started")
-}
+export const startChat = async () => {
+    try {
+        console.log("Chat started");
+        const response = await fetch('http://localhost:5000/start_chat');
+        if (response.ok) {
+            console.log("Chat started successfully");
+        } else {
+            console.error("Error starting chat:", response.statusText);
+        }
+    } catch (error) {
+        console.error("Error starting chat:", error);
+    }
+};
+
+
+export const sendMessage = async (message, percentage = null) => {
+    if (message.trim() !== "") {
+        try {
+            const requestBody = { message };
+            if (percentage !== null) {
+                requestBody.percentage = percentage;
+            }
+
+            const response = await fetch('http://localhost:5000/send_message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody) // Send the message and percentage in JSON format if percentage is provided
+            });
+
+            if (response.ok) {
+                console.log("Message Received:", response);
+                // Extract the response data as text
+                return await response.text(); // Return the received message
+            } else {
+                console.log("Message not received.");
+                return null; // Return null if message not received
+            }
+        } catch (error) {
+            console.log("Error receiving message:", error);
+            return null; // Return null if error occurs
+        }
+    }
+};

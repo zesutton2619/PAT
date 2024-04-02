@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { comparePatents, uploadPatent, retrievePatents, unzipFile } from "../apiFunctions";
+import {comparePatents, uploadPatent, retrievePatents, unzipFile, startChat, sendMessage} from "../apiFunctions";
 import robotIcon from '../images/robot-solid.svg'; // Adjust the path based on your directory structure
 import Display from "./PatentDisplay";
 import ReviewsBar from './submitNResultsSubComponent/review/ReviewBar';
@@ -12,6 +12,7 @@ const SubmitNResults = ({ selectedFile }) => {
     const [text, setText] = useState('');
     const [inputPercentage, setInputPercentage] = useState('');
     const [patents, setPatents] = useState([]);
+    const [assistantMessage, setAssistantMessage] = useState('The Patents are not similar, they have many differences');
 
     // const handleFileSelect = (file) => {
     //     setSelectedFile(file);
@@ -54,6 +55,9 @@ const SubmitNResults = ({ selectedFile }) => {
             } else {
                 console.error('Failed to retrieve patents:', response.statusText);
             }
+            await startChat();
+            const message = await sendMessage("Started Conversation from Compare with percentage", percentage)
+            setAssistantMessage(message);
             setIsLoading(false);
             console.log('Percentage:', percentage); // Do something with the percentage value
         } else {
@@ -94,8 +98,7 @@ const SubmitNResults = ({ selectedFile }) => {
                                     className="text-sm font-semibold text-gray-900 dark:text-white">PAT</span>
                                 <span className="text-sm font-normal text-gray-500 dark:text-gray-400">11:46</span>
                             </div>
-                            <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">The Patents are not
-                                similar, they have many differences</p>
+                            <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{assistantMessage}</p>
                             <span className="text-sm font-normal text-gray-500 dark:text-gray-400">Delivered</span>
                         </div>
                         <button id="dropdownMenuIconButton" data-dropdown-toggle="dropdownDots"
