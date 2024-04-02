@@ -11,7 +11,7 @@ class PAT:
     def __init__(self):
         self.chat_id = None
         load_dotenv()
-        openai_api_key = os.getenv('ZACH_OPENAI_API_KEY')
+        openai_api_key = os.getenv('PAULO_OPENAI_API_KEY')
         self.client = OpenAI(api_key=openai_api_key)
         self.lock = threading.Lock()
         self.patent_file_names = []
@@ -99,3 +99,9 @@ class PAT:
         self.patent_file_names.append(user_patent_file)
         for patent in patent_files:
             self.patent_file_names.append(patent[0])
+
+    def get_patent_fies(self):
+        return self.patent_file_names
+
+    def reset_patent_filenames(self):
+        self.patent_file_names = []

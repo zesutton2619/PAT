@@ -2,14 +2,52 @@ import os
 import time
 from sklearn.metrics.pairwise import cosine_similarity
 from patentProcessing import PatentProcessor
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from pat import PAT
+import zipfile
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 patent_processor = PatentProcessor()
 pat_chat = PAT()
+
+
+@app.route('/retrieve_patents', methods=['GET'])
+def retrieve_patents():
+    try:
+        # Get the filenames of the PDF files from pat_chat.patent_file_names
+        filenames = pat_chat.get_patent_fies()
+        print(filenames)
+
+        if not filenames:
+            return "No filenames provided", 400
+
+        # Initialize a list to store the file paths
+        file_paths = []
+
+        # Construct the full paths to the PDF files
+        for filename in filenames:
+            file_path = os.path.join(os.getcwd(), filename)  # Assuming filename contains the relative path
+            print("file_path: ", file_path)
+            if not os.path.exists(file_path):
+                return f"File '{filename}' not found", 404
+            file_paths.append(file_path)
+
+        # Create a zip file containing all PDF files
+        zip_filename = "patent_files.zip"
+        with zipfile.ZipFile(zip_filename, 'w', compression=zipfile.ZIP_STORED) as zipf:
+            for file_path in file_paths:
+                zipf.write(file_path, os.path.basename(file_path))
+
+        pat_chat.reset_patent_filenames()
+
+        # Send the zip file as an attachment
+        return send_file(zip_filename, as_attachment=True, mimetype='application/zip')
+
+    except Exception as e:
+        print(str(e))
+        return str(e), 500
 
 
 @app.route('/calculate-similarities', methods=['GET'])
@@ -70,8 +108,8 @@ def upload_patent():
         return 'No selected file', 400
 
     # Process the file here, for example, save it to a specific directory
-    file.save('uploads/' + file.filename)
-    patent_processor.set_reference_patent_filename('uploads/' + file.filename)
+    file.save('uploads\\' + file.filename)
+    patent_processor.set_reference_patent_filename('uploads\\' + file.filename)
 
     return 'File uploaded successfully', 200
 
