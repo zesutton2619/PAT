@@ -12,6 +12,16 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 patent_processor = PatentProcessor()
 pat_chat = PAT()
 
+# Define allowed file extensions and maximum file size
+ALLOWED_EXTENSIONS = {'pdf'}
+MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB
+
+
+# Function to check if the file extension is allowed
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @app.route('/retrieve_patents', methods=['GET'])
 def retrieve_patents():
@@ -106,11 +116,17 @@ def upload_patent():
     if file.filename == '':
         return 'No selected file', 400
 
-    # Process the file here, for example, save it to a specific directory
-    file.save('uploads\\' + file.filename)
-    patent_processor.set_reference_patent_filename('uploads\\' + file.filename)
+    if file and allowed_file(file.filename):
+        if file.content_length > MAX_CONTENT_LENGTH:
+            return 'File size exceeds maximum limit', 400
 
-    return 'File uploaded successfully', 200
+        # Save the file to a secure location
+        file.save(os.path.join('uploads', file.filename))
+        patent_processor.set_reference_patent_filename(os.path.join('uploads', file.filename))
+
+        return 'File uploaded successfully', 200
+    else:
+        return 'Invalid file type', 400
 
 
 @app.route('/start_chat')
@@ -121,7 +137,7 @@ def start_chat():
         pat_chat.upload_files()
         return "Chat started successfully"
     except Exception as e:
-        return str(e), 500  # Return error message and status code 500 if an error occurs
+        return "Error", 500  # Return error message and status code 500 if an error occurs
 
 
 @app.route('/send_message', methods=['POST'])
