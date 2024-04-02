@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { comparePatents, uploadPatent, retrievePatents, unzipFile } from "../apiFunctions";
 import robotIcon from '../images/robot-solid.svg'; // Adjust the path based on your directory structure
 import Display from "./PatentDisplay";
+import ReviewsBar from './submitNResultsSubComponent/review/ReviewBar';
 
 
 
@@ -77,11 +78,10 @@ const SubmitNResults = ({ selectedFile }) => {
                 </div>
             ) : (
                 <div className="relative flex items-center">
-                    <div
-                        className="bg-gray-200 rounded-full h-40 w-40 flex items-center justify-center text-5xl font-bold text-gray-800 mr-8"
-
-                    >
-                        {percentage}%
+                    <div className="row mt-3">
+                        <div className="col md-2">
+                            <ReviewsBar score={percentage}/>
+                        </div>
                     </div>
 
 
