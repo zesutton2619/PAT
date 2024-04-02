@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { comparePatents, uploadPatent } from "../apiFunctions";
+import { comparePatents, uploadPatent, retrievePatents, unzipFile } from "../apiFunctions";
 import robotIcon from '../images/robot-solid.svg'; // Adjust the path based on your directory structure
+import Display from "./PatentDisplay";
 
 
 
@@ -9,6 +10,7 @@ const SubmitNResults = ({ selectedFile }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [text, setText] = useState('');
     const [inputPercentage, setInputPercentage] = useState('');
+    const [patents, setPatents] = useState([]);
 
     // const handleFileSelect = (file) => {
     //     setSelectedFile(file);
@@ -42,6 +44,15 @@ const SubmitNResults = ({ selectedFile }) => {
             await uploadPatent(selectedFile);
             let percentage = await comparePatents(); // Wait for comparePatents() to complete and return a value
             setPercentage(percentage);
+            const response = await retrievePatents();
+            if (response.ok) {
+                const blob = await response.blob();
+                const zipFile = new File([blob], 'patents.zip', { type: 'application/zip' });
+                const patents = await unzipFile(zipFile);
+                setPatents(patents);
+            } else {
+                console.error('Failed to retrieve patents:', response.statusText);
+            }
             setIsLoading(false);
             console.log('Percentage:', percentage); // Do something with the percentage value
         } else {
@@ -124,7 +135,7 @@ const SubmitNResults = ({ selectedFile }) => {
                         </div>
                     </div>
 
-
+                    <Display patents={patents} />
                 </div>
             )}
 
