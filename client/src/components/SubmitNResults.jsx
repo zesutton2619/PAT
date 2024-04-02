@@ -1,28 +1,27 @@
 import React, { useState } from "react";
-import { comparePatents } from "../apiFunctions";
+import { comparePatents, uploadPatent } from "../apiFunctions";
 import robotIcon from '../images/robot-solid.svg'; // Adjust the path based on your directory structure
 
 
 
-const SubmitNResults = () => {
-    const [selectedFile, setSelectedFile] = useState(null);
+const SubmitNResults = ({ selectedFile }) => {
     const [percentage, setPercentage] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [text, setText] = useState('');
     const [inputPercentage, setInputPercentage] = useState('');
 
-    const handleFileSelect = (file) => {
-        setSelectedFile(file);
-    };
+    // const handleFileSelect = (file) => {
+    //     setSelectedFile(file);
+    // };
 
-    const handleSubmit = async () => {
-        setIsLoading(true);
-
-        // Simulate a delay of 5 seconds
-        await new Promise(resolve => setTimeout(resolve, 5000));
-
-        setIsLoading(false);
-    };
+    // const handleSubmit = async () => {
+    //     setIsLoading(true);
+    //
+    //     // Simulate a delay of 5 seconds
+    //     await new Promise(resolve => setTimeout(resolve, 5000));
+    //
+    //     setIsLoading(false);
+    // };
 
     const handleInputChange = event => {
         setInputPercentage(event.target.value);
@@ -34,11 +33,32 @@ const SubmitNResults = () => {
 
     function handleButtonClick() {
         let percentage = comparePatents(setPercentage);
-        handleSubmit();
+        // handleSubmit();
     }
 
+    const handleCompare = async () => {
+        if (selectedFile) {
+            setIsLoading(true);
+            await uploadPatent(selectedFile);
+            let percentage = await comparePatents(); // Wait for comparePatents() to complete and return a value
+            setPercentage(percentage);
+            setIsLoading(false);
+            console.log('Percentage:', percentage); // Do something with the percentage value
+        } else {
+            console.error("No file selected");
+        }
+    };
+
+
     return (
+
         <div className="flex flex-col items-center h-screen mt-10">
+            <button
+                onClick={handleCompare}
+                className="ml-4 bg-gray-700 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+            >
+                Compare
+            </button>
             {isLoading ? (
                 <div className="flex items-center justify-center">
                     <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
@@ -54,7 +74,7 @@ const SubmitNResults = () => {
 
 
                     <div className="flex items-start gap-2.5">
-                        <img src={robotIcon} alt="Robot Icon" className="w-8 h-8 rounded-full" />
+                        <img src={robotIcon} alt="Robot Icon" className="w-8 h-8 rounded-full"/>
                         <div
                             className="flex flex-col w-full max-w-[320px] leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700">
                             <div className="flex items-center space-x-2 rtl:space-x-reverse">
@@ -62,7 +82,8 @@ const SubmitNResults = () => {
                                     className="text-sm font-semibold text-gray-900 dark:text-white">PAT</span>
                                 <span className="text-sm font-normal text-gray-500 dark:text-gray-400">11:46</span>
                             </div>
-                            <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">The Patents are not similar, they have many differences</p>
+                            <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">The Patents are not
+                                similar, they have many differences</p>
                             <span className="text-sm font-normal text-gray-500 dark:text-gray-400">Delivered</span>
                         </div>
                         <button id="dropdownMenuIconButton" data-dropdown-toggle="dropdownDots"

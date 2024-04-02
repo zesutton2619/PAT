@@ -1,10 +1,17 @@
-import React from 'react';
+// PatDashboard.jsx
+import React, { useState } from "react";
 import Init from './../components/Initialize';
 import SubmitNResults from '../components/SubmitNResults';
 import Display from '../components/PatentDisplay';
 
 const Dash = () => {
+    const [selectedFile, setSelectedFile] = useState(null);
+
+    const handleFileSelect = (file) => {
+        setSelectedFile(file);
+    };
     return (
+
         <div>
 
             <nav className="border-gray-200 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
@@ -50,8 +57,8 @@ const Dash = () => {
             </nav>
 
 
-            <Init/>
-            <SubmitNResults/>
+            <Init onFileSelect={handleFileSelect} />
+            <SubmitNResults selectedFile={selectedFile} />
 
 
 
