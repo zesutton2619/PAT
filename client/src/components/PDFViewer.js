@@ -13,10 +13,16 @@ const PDFViewer = ({ pdfUrl }) => {
     };
 
     return (
-        <div style={{ width: '100%', maxHeight: '600px', overflow: 'auto' }}>
+        <div style={{ width: '100%', height: '600px', overflow: 'auto' }}>
             <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
-                {Array.from(new Array(numPages), (el, index) => (
-                    <Page key={`page_${index + 1}`} pageNumber={index + 1} width={300} renderTextLayer={false} />
+                {Array.from(new Array(numPages), (_, index) => (
+                    <Page
+                        key={`page_${index + 1}`}
+                        pageNumber={index + 1}
+                        width={300}
+                        renderTextLayer={false}
+                        renderAnnotationLayer={false}
+                    />
                 ))}
             </Document>
         </div>
