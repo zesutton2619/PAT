@@ -36,37 +36,57 @@ export const handleSubmit = async (event) => {
     }
 };
 
-export const uploadPatent = async (file) => {
+export const uploadPatent = async (files) => {
     try {
-        const formData = new FormData();
-        formData.append('file', file);
+        console.log("Files:", files);
+        console.log("Files length:", files.length);
+        console.log("Files type:", typeof files);
 
-        const response = await fetch('http://localhost:5000/upload_patent', {
-            method: 'POST',
-            body: formData
-        });
+        if (files && files.length > 0) {
+            const formData = new FormData();
 
-        if (response.ok) {
-            console.log('File uploaded successfully');
-            // Optionally, return any response data
-            // const data = await response.json();
-            // return data;
+            // Convert files to an array
+            const filesArray = Array.from(files);
+
+            filesArray.forEach((file, index) => {
+                console.log(`File ${index}:`, file);
+                formData.append(`file${index}`, file);
+            });
+
+            for (const key of formData.entries()) {
+                console.log(key[0] + ', ' + key[1]);
+            }
+
+            const response = await fetch('http://localhost:5000/upload_patent', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                console.log('File(s) uploaded successfully');
+            } else {
+                console.error('Failed to upload file(s)');
+            }
         } else {
-            console.error('Failed to upload file');
+            console.error('No files provided');
+
         }
     } catch (error) {
-        console.error('Error uploading file:', error);
+        console.error('Error uploading file(s):', error);
     }
 };
 
-export const comparePatents = async () => {
+
+export const comparePatents = async (directComparison = false) => {
     try {
         // Make a GET request to the Flask route
+        const requestBody = {directComparison}
         const response = await fetch('http://localhost:5000/calculate-similarities', {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify(requestBody)
         });
 
         if (response.ok) {

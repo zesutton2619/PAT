@@ -27,7 +27,7 @@ const Dash = () => {
     const handleCompareAll = async () => {
         if (selectedFile) {
             setIsLoading(true);
-            await uploadPatent(selectedFile);
+            await uploadPatent([selectedFile]);
             let percentage = await comparePatents();
             setSyntaxPercentage(percentage);
             const response = await retrievePatents();
@@ -52,8 +52,10 @@ const Dash = () => {
         }
     };
 
-    const handleCompare = async ()=> {
-
+    const handleDirectCompare = async ()=> {
+        console.log("Selected Files: ", [selectedFile, selectDirectFile])
+        await uploadPatent([selectedFile, selectDirectFile]);
+        let percentage = await comparePatents(true);
     }
 
     const handleFileSelect = (file) => {
@@ -78,7 +80,7 @@ const Dash = () => {
                             <Init onFileSelect={handleFileSelect} onDirectFileSelect={handleFileSelect2}/>
                             <div className="flex justify-center items-center mt-5 mx-auto">
                                 <button
-                                    onClick={handleCompare}
+                                    onClick={handleDirectCompare}
                                     className="flex bg-gray-700 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg transform hover:scale-110 transition duration-300 ease-in-out mr-4"
                                 >
                                     Direct Compare
