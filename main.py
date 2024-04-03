@@ -107,7 +107,7 @@ def calculate_similarities():
 
 @app.route('/upload_patent', methods=['POST'])
 def upload_patent():
-    pat_chat.reset_patent_filenames()
+    pat_chat.reset_patent_files()
     if 'file' not in request.files:
         return 'No file part', 400
 
@@ -144,13 +144,20 @@ def start_chat():
 @app.route('/send_message', methods=['POST'])
 def send_message():
     response = ""
+    context_percentage = None  # Initialize context percentage to None
+
     if request.method == 'POST':
         message = request.json.get('message')
         percentage = request.json.get('percentage')
         print("Message received: ", message)
-        response = pat_chat.generate_response(message, percentage)
+
+        # Call generate_response to get the response and context percentage
+        response, context_percentage = pat_chat.generate_response(message, percentage)
+
         print("Response: ", response)
-    return response, 200
+
+    # Return both the response and context percentage
+    return jsonify({'text': response, 'context_percentage': context_percentage}), 200
 
 
 if __name__ == '__main__':

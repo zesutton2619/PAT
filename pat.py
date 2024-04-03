@@ -5,6 +5,7 @@ import sqlite3
 from dotenv import load_dotenv
 from openai import OpenAI
 import random
+import re
 
 
 class PAT:
@@ -80,7 +81,6 @@ class PAT:
                 return thread_id
 
     def generate_response(self, message_body, percentage):
-        # Assuming self.chat_id is set somewhere before calling generate_response
         thread_id = self.check_if_thread_exist(self.chat_id)
 
         print("Percentage: ", percentage)
@@ -88,20 +88,21 @@ class PAT:
 
         if message_body == "Started Conversation from Compare with percentage" and percentage is not None:
             message_body = (f"{self.patent_files[0]} is the patent I provided and is "
-                            f"{percentage}% similar in grammar and syntax to {self.patent_files[1]}."
-                            f"Your response should clear, concise and be in this format. "
-                            f"Pat's Thoughts on Grammar and Syntax Similarity: "
-                            f"(This portion of the response is your analysis on why the patents are "
-                            f"{percentage}% similar in grammar and syntax.),"
-                            f"Pat's Thoughts on Context Similarity: "
-                            f"(This portion of the response is your analysis on how similar "
-                            f"the patents are in their context. Be objective in this analysis.)"
-                            f"Context Similarity Percentage: "
-                            f"(This is a percentage based on your context similarity analysis "
-                            f"0% being no context similarities between the patents"
-                            f" - 100% exactly the same context between the patents"
-                            f"you don't need to"
-                            f"explain your percentage in your response just provide me with the percentage value.")
+                            f"{percentage}% similar in grammar and syntax to {self.patent_files[1]}. "
+                            f"Your response should be clear, concise, and follow this format without using asterisks "
+                            f"to indicate bold formatting:\n\n"
+                            f"1. Pat's Thoughts on Grammar and Syntax Similarity: Provide insights into why the patents"
+                            f" exhibit a {percentage}% similarity in grammar and syntax. Focus on structural "
+                            f"similarities, common technical terms, or linguistic patterns.\n\n"
+                            f"2. Pat's Thoughts on Context Similarity: Objectively analyze the extent of similarity in "
+                            f"context between the patents. The context similarity percentage reflects the degree of "
+                            f"overlap in ideas, concepts, or technical approaches.\n\n"
+                            f"3. Context Similarity Percentage: (Context Similarity Percentage goes here)"
+                            f"Note: The context similarity percentage should accurately reflect the observed "
+                            f"similarities in context. A percentage closer to 0% indicates minimal context "
+                            f"similarities, while a higher percentage implies significant overlap. The percentage"
+                            f"should not be a range only one value. You're not required to explain the percentage "
+                            f"separately; it should reflect your analysis directly.")
 
         print("Message Body: ", message_body)
 
@@ -111,11 +112,17 @@ class PAT:
             content=message_body
         )
         new_message = self.run_assistant(thread_id)
-        return new_message
+        print("\nOriginal Response: ", new_message, "\n\n")
+        if percentage is not None:
+            message, context_percentage = self.get_context_similarity_percentage(new_message)
+        else:
+            message = new_message
+            context_percentage = None
+        print("Stripped Message: ", message)
+        print("Context percentage: ", context_percentage)
+        return message, context_percentage
 
     def run_assistant(self, thread_id):
-        # assistant_id = "asst_gQldQODD7YRPwyldwYP4jW2z"
-        # assistant = self.client.beta.assistants.retrieve(assistant_id)
         print(self.client.beta.assistants.list())
 
         run = self.client.beta.threads.runs.create(
@@ -149,5 +156,24 @@ class PAT:
     def get_patent_file_names(self):
         return self.patent_file_names
 
-    def reset_patent_filenames(self):
+    def reset_pat_chat(self):
+        self.chat_id = None
         self.patent_file_names = []
+        self.patent_files = []
+
+    @staticmethod
+    def get_context_similarity_percentage(message):
+        # Define a regular expression pattern to extract the context similarity percentage
+        percentage_pattern = r'3. Context Similarity Percentage:\s*\n*([^%]+)%?'
+
+        # Search for the percentage pattern in the message
+        match = re.search(percentage_pattern, message)
+
+        if match:
+            # Extract the percentage value from the matched group
+            context_similarity_percentage = int(match.group(1).strip())
+            # Remove the line containing the context similarity percentage from the message
+            formatted_message = re.sub(percentage_pattern, '', message)
+            return formatted_message.strip(), context_similarity_percentage
+        else:
+            return message.strip(), None
