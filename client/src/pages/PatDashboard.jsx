@@ -13,6 +13,7 @@ import ReviewBar from "../components/submitNResultsSubComponent/review/ReviewBar
 
 const Dash = () => {
     const [selectedFile, setSelectedFile] = useState(null);
+    const [selectDirectFile, setDirectFile] = useState(null);
     const [syntaxPercentage, setSyntaxPercentage] = useState(0);
     const [contextPercentage, setContextPercentage] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +24,7 @@ const Dash = () => {
     const [newMessage, setNewMessage] = useState('');
     const initialBotMessageSent = useRef(false);
 
-    const handleCompare = async () => {
+    const handleCompareAll = async () => {
         if (selectedFile) {
             setIsLoading(true);
             await uploadPatent(selectedFile);
@@ -51,9 +52,17 @@ const Dash = () => {
         }
     };
 
+    const handleCompare = async ()=> {
+
+    }
+
     const handleFileSelect = (file) => {
         setSelectedFile(file);
     };
+
+    const handleFileSelect2 = (file) => {
+        setDirectFile(file)
+    }
     return (
 
         <div>
@@ -66,7 +75,7 @@ const Dash = () => {
                 <div className="flex-grow w-[50%] pl-15 justify-start mb-10">
                     <div className="flex">
                         <div className="w-1/2 ml-5">
-                            <Init onFileSelect={handleFileSelect}/>
+                            <Init onFileSelect={handleFileSelect} onDirectFileSelect={handleFileSelect2}/>
                             <div className="flex justify-center items-center mt-5 mx-auto">
                                 <button
                                     onClick={handleCompare}
@@ -75,7 +84,7 @@ const Dash = () => {
                                     Direct Compare
                                 </button>
                                 <button
-                                    onClick={handleCompare}
+                                    onClick={handleCompareAll}
                                     className="flex bg-gray-700 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg transform hover:scale-110 transition duration-300 ease-in-out"
                                 >
                                     General Compare

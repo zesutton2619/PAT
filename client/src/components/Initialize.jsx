@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 
-const Init = ({ onFileSelect }) => {
+const Init = ({ onFileSelect, onDirectFileSelect }) => {
     const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedDirectFile, setDirectFile] = useState(null);
     const [selectedOption, setSelectedOption] = useState("");
     const [selectedOption2, setSelectedOption2] = useState("");
 
@@ -10,6 +11,12 @@ const Init = ({ onFileSelect }) => {
         setSelectedFile(file);
         onFileSelect(file);
     };
+    
+    const handleDirectFileChange = (event) => {
+        const file = event.target.files[0];
+        setDirectFile(file);
+        onDirectFileSelect(file);
+    }
 
     return (
         <div className="flex justify-center items-center mt-7">
@@ -84,9 +91,9 @@ const Init = ({ onFileSelect }) => {
                         <div className="flex items-center justify-center bg-gray-100 border-2 border-gray-300 rounded-lg p-4">
                             <label htmlFor="file-upload2" className="cursor-pointer bg-white rounded-lg px-4 py-2 border border-gray-400 text-gray-800 hover:bg-gray-50 transition duration-300 flex-grow-0 flex-shrink-0">
                                 Choose a file
-                                <input id="file-upload2" type="file" className="sr-only" onChange={handleFileChange}/>
+                                <input id="file-upload2" type="file" className="sr-only" onChange={handleDirectFileChange}/>
                             </label>
-                            <span className="ml-3 flex-grow">{selectedFile ? selectedFile.name : "No file selected"}</span>
+                            <span className="ml-3 flex-grow">{selectedDirectFile ? selectedDirectFile.name : "No file selected"}</span>
                         </div>
                     </div>
                 </div>
