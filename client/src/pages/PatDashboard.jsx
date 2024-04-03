@@ -1,5 +1,5 @@
 // PatDashboard.jsx
-import React, { useState } from "react";
+import React, {useRef, useState} from "react";
 import Init from './../components/Initialize';
 import SubmitNResults from '../components/SubmitNResults';
 import Display from '../components/PatentDisplay';
@@ -19,6 +19,9 @@ const Dash = () => {
     const [text, setText] = useState('');
     const [inputPercentage, setInputPercentage] = useState('');
     const [patents, setPatents] = useState([]);
+    const [messages, setMessages] = useState([]);
+    const [newMessage, setNewMessage] = useState('');
+    const initialBotMessageSent = useRef(false);
 
     const handleCompare = async () => {
         if (selectedFile) {

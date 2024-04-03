@@ -2,11 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import {sendMessage} from "../apiFunctions";
 import './../style/chat.css'; // Import CSS file for styling
 import robotIcon from "../images/robot-solid.svg";
+import "./PatDashboard"
+
 
 const Chat = ({botMessage}) => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const initialBotMessageSent = useRef(false);
+
 
     useEffect(() => {
         if (!initialBotMessageSent.current) {
