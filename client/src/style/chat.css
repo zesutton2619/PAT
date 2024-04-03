@@ -1,0 +1,86 @@
+/* Chat container styles */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Message bubble styles */
+.message {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    margin: 4px;
+    border-radius: 20px;
+    max-width: 70%;
+    animation: fadeIn 0.5s ease;
+}
+
+/* User message styles */
+.user {
+    align-self: flex-end;
+    background-color:  rgb(55 65 81);
+    color: white;
+}
+
+/* Bot message styles */
+.bot {
+    align-self: flex-start;
+    background-color: #f1f1f1;
+    color: black;
+}
+
+/* Avatar styles */
+.avatar {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+/* Input and send button styles */
+.input-container {
+    display: flex;
+    margin-top: 8px;
+}
+
+.input-message {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+}
+
+.send-button {
+    padding: 8px 16px;
+    margin-left: 8px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.send-button:hover {
+    background-color: #0056b3;
+}
+/* Chat header styles */
+.chat-header {
+    text-align: center;
+    color:  rgb(55 65 81); /* Match the color of the send button */
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size:26px;
+}
+
+/* Header divider line styles */
+.header-divider {
+    border: none;
+    height: 1px;
+    background-color:  rgb(55 65 81); /* Match the color of the send button */
+    margin-bottom: 8px;
+}

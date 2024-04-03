@@ -1,142 +1,63 @@
 import React, { useState } from "react";
-import { comparePatents, uploadPatent, retrievePatents, unzipFile } from "../apiFunctions";
-import robotIcon from '../images/robot-solid.svg'; // Adjust the path based on your directory structure
-import Display from "./PatentDisplay";
 
+const Init = ({ onFileSelect }) => {
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedOption, setSelectedOption] = useState("");
 
-
-const SubmitNResults = ({ selectedFile }) => {
-    const [percentage, setPercentage] = useState(0);
-    const [isLoading, setIsLoading] = useState(false);
-    const [text, setText] = useState('');
-    const [inputPercentage, setInputPercentage] = useState('');
-    const [patents, setPatents] = useState([]);
-
-    // const handleFileSelect = (file) => {
-    //     setSelectedFile(file);
-    // };
-
-    // const handleSubmit = async () => {
-    //     setIsLoading(true);
-    //
-    //     // Simulate a delay of 5 seconds
-    //     await new Promise(resolve => setTimeout(resolve, 5000));
-    //
-    //     setIsLoading(false);
-    // };
-
-    const handleInputChange = event => {
-        setInputPercentage(event.target.value);
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        onFileSelect(file);
     };
-
-    const handleTextChange = event => {
-        setText(event.target.value);
-    };
-
-    function handleButtonClick() {
-        let percentage = comparePatents(setPercentage);
-        // handleSubmit();
-    }
-
-    const handleCompare = async () => {
-        if (selectedFile) {
-            setIsLoading(true);
-            await uploadPatent();
-            let percentage = await comparePatents(); // Wait for comparePatents() to complete and return a value
-            setPercentage(percentage);
-            /*const response = await retrievePatents();
-            if (response.ok) {
-                const blob = await response.blob();
-                const zipFile = new File([blob], 'patents.zip', { type: 'application/zip' });
-                const patents = await unzipFile(zipFile);
-                setPatents(patents);
-            } else {
-                console.error('Failed to retrieve patents:', response.statusText);
-            }
-            */ setIsLoading(false);
-            console.log('Percentage:', percentage); // Do something with the percentage value
-        } else {
-            console.error("No file selected");
-        }
-    };
-
 
     return (
-
-        <div className="flex flex-col items-center h-screen mt-10">
-            <button
-                onClick={handleCompare}
-                className="ml-4 bg-gray-700 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
-            >
-                Compare
-            </button>
-            {isLoading ? (
-                <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
-                </div>
-            ) : (
-                <div className="relative flex items-center">
-                    <div className="relative flex items-center flex-col">
-                        <div
-                            className="bg-gray-200 rounded-full h-40 w-40 flex items-center justify-center text-5xl font-bold text-gray-800 mb-2"
-                        >
-                            {percentage}%
-                        </div>
-                        <div className="text-2xl font-semibold text-gray-700  ">Similarity Rating</div>
-                    </div>
-
-
-                    <div className="flex items-start gap-2.5 ml-10">
-                        <img src={robotIcon} alt="Robot Icon" className="w-8 h-8 rounded-full"/>
-                        <div
-                            className="flex flex-col w-full max-w-[320px] leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700">
-                            <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                                <span className="text-sm font-semibold text-gray-900 dark:text-white">PAT</span>
-                                <span className="text-sm font-normal text-gray-500 dark:text-gray-400">11:46</span>
+        <div className="flex justify-center items-center mt-7">
+            <div className="container flex flex-col items-stretch">
+                <div className="flex items-start">
+                    <div className="flex-1 bg-gray-100 flex items-center justify-center">
+                        <div className="max-w-md w-full p-3 bg-white shadow-md rounded-lg overflow-hidden">
+                            <div className="p-4">
+                                <h2 className="text-3xl font-bold text-gray-800 mb-4">Upload File</h2>
+                                <div className="flex items-center justify-center bg-gray-100 border-2 border-gray-300 rounded-lg p-4">
+                                    <label htmlFor="file-upload" className="cursor-pointer bg-white rounded-lg px-4 py-2 border border-gray-400 text-gray-800 hover:bg-gray-50 transition duration-300 flex-grow-0 flex-shrink-0">
+                                        Choose a file
+                                        <input id="file-upload" type="file" className="sr-only" onChange={handleFileChange} />
+                                    </label>
+                                    <span className="ml-3 flex-grow">{selectedFile ? selectedFile.name : "No file selected"}</span>
+                                </div>
                             </div>
-                            <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white typing-animation">The
-                                Patents are not similar, they have many differences</p>
-                            <span className="text-sm font-normal text-gray-500 dark:text-gray-400">Delivered</span>
-                        </div>
-                        <button id="dropdownMenuIconButton" data-dropdown-toggle="dropdownDots"
-                                data-dropdown-placement="bottom-start"
-                                className="inline-flex self-center items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800 dark:focus:ring-gray-600"
-                                type="button">
-                            <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 4 15">
-                                <path
-                                    d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/>
-                            </svg>
-                        </button>
-                        <div id="dropdownDots"
-                             className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-40 dark:bg-gray-700 dark:divide-gray-600">
-                            <ul className="py-2 text-sm text-gray-700 dark:text-gray-200"
-                                aria-labelledby="dropdownMenuIconButton">
-                            </ul>
                         </div>
                     </div>
-
-
+                    <div className="flex-1 bg-gray-100 flex items-center justify-center ml-4">
+                        <div className="max-w-md w-full p-3 bg-white shadow-md rounded-lg overflow-hidden">
+                            <div className="p-4">
+                                <h2 className="text-3xl font-bold text-gray-800 mb-4">Select Category</h2>
+                                <div className="flex items-center justify-center bg-gray-100 border-2 border-gray-300 rounded-lg p-4">
+                                    <div className="relative inline-block text-left w-full">
+                                        <div>
+                                            <button type="button" className="w-full px-4 py-2 text-left text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue" id="options-menu" aria-haspopup="true" aria-expanded="true">
+                                                {selectedOption ? selectedOption : "Select a category"}
+                                                <svg className="w-5 h-5 ml-2 -mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M7 7l3-3 3 3m-3 4l-3 3-3-3m6-3v6" clipRule="evenodd"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        {/* Dropdown panel, show/hide based on dropdown state */}
+                                        <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5" aria-labelledby="options-menu">
+                                            <button className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900" onClick={() => setSelectedOption("Category 1")}>Category 1</button>
+                                            <button className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900" onClick={() => setSelectedOption("Category 2")}>Category 2</button>
+                                            <button className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900" onClick={() => setSelectedOption("Category 3")}>Category 3</button>
+                                            <button className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900" onClick={() => setSelectedOption("Category 4")}>Category 4</button>
+                                            <button className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900" onClick={() => setSelectedOption("Category 5")}>Category 5</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            )}
-
-            <div className="mt-8 flex items-center">
-                <input
-                    type="text"
-                    value={text}
-                    onChange={handleTextChange}
-                    placeholder="Talk to PAT"
-                    className="border border-gray-300 rounded-lg px-4 py-2"
-                />
-                <button
-                    onClick={handleButtonClick}
-                    className="ml-4 bg-gray-700 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
-                >
-                    Send
-                </button>
             </div>
         </div>
     );
 }
 
-export default SubmitNResults;
+export default Init;
