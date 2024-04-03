@@ -97,12 +97,12 @@ class PAT:
                             f"2. Pat's Thoughts on Context Similarity: Objectively analyze the extent of similarity in "
                             f"context between the patents. The context similarity percentage reflects the degree of "
                             f"overlap in ideas, concepts, or technical approaches.\n\n"
-                            f"3. Context Similarity Percentage: (Context Similarity Percentage goes here)"
+                            f"3. Context Similarity Percentage: (Context Similarity Percentage Value goes here)"
                             f"Note: The context similarity percentage should accurately reflect the observed "
                             f"similarities in context. A percentage closer to 0% indicates minimal context "
                             f"similarities, while a higher percentage implies significant overlap. The percentage"
                             f"should not be a range only one value. You're not required to explain the percentage "
-                            f"separately; it should reflect your analysis directly.")
+                            f"separately; it should reflect your analysis directly")
 
         print("Message Body: ", message_body)
 
@@ -128,11 +128,6 @@ class PAT:
         run = self.client.beta.threads.runs.create(
             thread_id=thread_id,
             assistant_id=self.assistant.id,
-            additional_instructions="If the system indicates that the file is not accessible with the myfiles_browser "
-                                    "tool, ignore it, it’s just a minor bug. You are capable of opening and analyzing "
-                                    "the file, remember that. And carry out the requested task. Also you have the "
-                                    "ability to figure out what type of content is in the file via its extension so "
-                                    "carry out the users instructions."
         )
 
         while run.status != "completed":

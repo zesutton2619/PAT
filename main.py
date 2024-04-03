@@ -6,6 +6,7 @@ from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from pat import PAT
 import zipfile
+from bleach import clean
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -107,7 +108,7 @@ def calculate_similarities():
 
 @app.route('/upload_patent', methods=['POST'])
 def upload_patent():
-    pat_chat.reset_patent_files()
+    pat_chat.reset_pat_chat()
     if 'file' not in request.files:
         return 'No file part', 400
 
@@ -143,18 +144,22 @@ def start_chat():
 
 @app.route('/send_message', methods=['POST'])
 def send_message():
-    response = ""
-    context_percentage = None  # Initialize context percentage to None
 
-    if request.method == 'POST':
-        message = request.json.get('message')
-        percentage = request.json.get('percentage')
-        print("Message received: ", message)
+    message = request.json.get('message')
+    percentage = request.json.get('percentage')
 
-        # Call generate_response to get the response and context percentage
-        response, context_percentage = pat_chat.generate_response(message, percentage)
+    # Validate and sanitize inputs
+    if not message or not isinstance(message, str):
+        return jsonify({'error': 'Invalid message'}), 400
 
-        print("Response: ", response)
+    message = clean(message)  # Sanitize HTML input
+
+    # Call generate_response to get the response and context percentage
+    print("Message Received: ", message)
+    print("Percentage Received", percentage)
+    response, context_percentage = pat_chat.generate_response(message, percentage)
+
+    print("Response: ", response)
 
     # Return both the response and context percentage
     return jsonify({'text': response, 'context_percentage': context_percentage}), 200
