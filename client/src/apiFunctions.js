@@ -144,9 +144,18 @@ export const sendMessage = async (message, percentage = null) => {
             });
 
             if (response.ok) {
-                console.log("Message Received:", response);
-                // Extract the response data as text
-                return await response.text(); // Return the received message
+                // Extract the response data as JSON
+                const data = await response.json();
+                const responseData = { text: data.text, context_percentage: data.context_percentage };
+                console.log("Message Received:", responseData);
+                // Ensure context_percentage is present in the response data
+                console.log("Response text: ", responseData.text)
+                console.log("Context Percentage: ", responseData.context_percentage)
+                // Return an object containing both the received message and context percentage
+                return {
+                    text: responseData.text,
+                    contextPercentage: responseData.context_percentage
+                };
             } else {
                 console.log("Message not received.");
                 return null; // Return null if message not received
