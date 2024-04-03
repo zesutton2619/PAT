@@ -12,6 +12,7 @@ class PatentProcessor:
         self.documents = None
         self.reference_vector = None
         self.reference_patent = None
+        self.direct_comparison_patents = []
 
     def vectorize_documents(self, documents):
         # Fit the vectorizer on all documents to learn vocabulary
@@ -28,6 +29,15 @@ class PatentProcessor:
 
     def set_reference_patent_filename(self, filename):
         self.reference_patent = filename
+
+    def set_direct_comparison_filenames(self, filename):
+        self.direct_comparison_patents.append(filename)
+
+    def reset_direct_comparison_filenames(self):
+        self.direct_comparison_patents = []
+
+    def get_direct_comparison_filenames(self):
+        return self.direct_comparison_patents
 
     @staticmethod
     def process_pdf(file_name):

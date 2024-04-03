@@ -59,75 +59,134 @@ def retrieve_patents():
         return str(e), 500
 
 
-@app.route('/calculate-similarities', methods=['GET'])
+@app.route('/calculate-similarities', methods=['POST'])
 def calculate_similarities():
     start_time = time.time()  # Start the timer
-    patent_list = patent_processor.get_patent_list("Utility Patents")
+    direct_comparison = request.json.get('directComparison')
     preprocessed_texts = []
+    print("direct_comparison", direct_comparison)
+    if direct_comparison:
 
-    # Process PDFs and collect preprocessed texts
-    for filename in patent_list:
-        preprocessed_text = patent_processor.process_pdf(filename)
-        preprocessed_texts.append(preprocessed_text)
+        patent_list = patent_processor.get_direct_comparison_filenames()
+        print("patent list:", patent_list)
 
-    # Vectorize documents and set reference patent
-    tfidf_vectors = patent_processor.vectorize_documents(preprocessed_texts)
-    patent_processor.set_reference_patent()
+        if len(patent_list) != 2:
+            return 'Direct comparison requires exactly two patents', 400
 
-    similarities = []
-    filenames = []  # List to store filenames
+        # Process PDFs and collect preprocessed texts
+        for filename in patent_list:
+            preprocessed_text = patent_processor.process_pdf(filename)
+            preprocessed_texts.append(preprocessed_text)
 
-    # Calculate similarities
-    for tfidf_vector, filename in zip(tfidf_vectors, patent_list):
-        similarity = cosine_similarity(patent_processor.reference_vector, tfidf_vector)[0][0]
-        similarities.append(similarity)
-        filenames.append((filename, similarity))  # Store filename along with similarity
+        # Vectorize documents
+        tfidf_vectors = patent_processor.vectorize_documents(preprocessed_texts)
 
-    # Sort based on similarity scores
-    similarity_results = sorted(filenames, key=lambda x: x[1], reverse=True)
+        # Calculate similarity between the two patents
+        similarity = cosine_similarity(tfidf_vectors[0], tfidf_vectors[1])[0][0]
 
-    # Extract top result
-    top_result = similarity_results[0] if similarity_results else None
+        pat_chat.set_patent_files(patent_list[1], patent_list[0])
 
-    # Print for debugging
+        return jsonify((patent_list[1], similarity))
 
-    # Stop the timer
-    end_time = time.time()
-    elapsed_time = end_time - start_time  # Calculate elapsed time
+    else:
 
-    # Print elapsed time for debugging
-    print("Elapsed Time:", elapsed_time)
+        patent_list = patent_processor.get_patent_list("Utility Patents")
 
-    print(similarities)
-    print(top_result)
-    pat_chat.set_patent_files([top_result], patent_processor.reference_patent)
+        # Process PDFs and collect preprocessed texts
+        for filename in patent_list:
+            preprocessed_text = patent_processor.process_pdf(filename)
+            preprocessed_texts.append(preprocessed_text)
 
-    # Return top result
-    return jsonify(top_result)
+        # Vectorize documents and set reference patent
+        tfidf_vectors = patent_processor.vectorize_documents(preprocessed_texts)
+        patent_processor.set_reference_patent()
+
+        filenames = []  # List to store filenames
+        similarities = []
+
+        # Calculate similarities
+        for tfidf_vector, filename in zip(tfidf_vectors, patent_list):
+            similarity = cosine_similarity(patent_processor.reference_vector, tfidf_vector)[0][0]
+            similarities.append(similarity)
+            filenames.append((filename, similarity))  # Store filename along with similarity
+
+        # Sort based on similarity scores
+        similarity_results = sorted(filenames, key=lambda x: x[1], reverse=True)
+
+        # Extract top result
+        top_result = similarity_results[0] if similarity_results else None
+
+        # Print for debugging
+
+        # Stop the timer
+        end_time = time.time()
+        elapsed_time = end_time - start_time  # Calculate elapsed time
+
+        # Print elapsed time for debugging
+        print("Elapsed Time:", elapsed_time)
+
+        print(similarities)
+        print(top_result)
+        pat_chat.set_patent_files([top_result], patent_processor.reference_patent)
+
+        # Return top result
+        return jsonify(top_result)
 
 
 @app.route('/upload_patent', methods=['POST'])
 def upload_patent():
     pat_chat.reset_pat_chat()
-    if 'file' not in request.files:
-        return 'No file part', 400
+    patent_processor.reset_direct_comparison_filenames()
 
-    file = request.files['file']
+    files = []
+    for key, file in request.files.items():
+        if key.startswith('file'):
+            files.append(file)
 
-    if file.filename == '':
-        return 'No selected file', 400
+    if not files:
+        print("No files received")
+        return 'No files received', 400
 
-    if file and allowed_file(file.filename):
-        if file.content_length > MAX_CONTENT_LENGTH:
-            return 'File size exceeds maximum limit', 400
+    elif len(files) == 1:
+        file = files[0]
+        if file.filename == '':
+            print('No selected file')
+            return 'No selected file', 400
 
-        # Save the file to a secure location
-        file.save(os.path.join('uploads', file.filename))
-        patent_processor.set_reference_patent_filename(os.path.join('uploads', file.filename))
+        if file and allowed_file(file.filename):
+            if file.content_length > MAX_CONTENT_LENGTH:
+                print('File size exceeds maximum limit')
+                return 'File size exceeds maximum limit', 400
 
-        return 'File uploaded successfully', 200
+            file.save(os.path.join('uploads', file.filename))
+            patent_processor.set_reference_patent_filename(file.filename)
+
+            return 'File uploaded successfully', 200
+
+        else:
+            print('Invalid file type')
+            return 'Invalid file type', 400
+
     else:
-        return 'Invalid file type', 400
+        for file in files:
+            if file.filename == '':
+                print('No selected file')
+                return 'No selected file', 400
+
+            if file and allowed_file(file.filename):
+                if file.content_length > MAX_CONTENT_LENGTH:
+                    print('File size exceeds maximum limit')
+                    return 'File size exceeds maximum limit', 400
+
+                file.save(os.path.join('uploads', file.filename))
+                patent_processor.set_direct_comparison_filenames('uploads\\'+file.filename)
+                # Optionally, you can process each file here if needed
+
+            else:
+                print('Invalid file type')
+                return 'Invalid file type', 400
+
+        return 'Files uploaded successfully', 200
 
 
 @app.route('/start_chat')
