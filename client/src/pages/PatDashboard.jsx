@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Init from './../components/Initialize';
 import SubmitNResults from '../components/SubmitNResults';
 import Display from '../components/PatentDisplay';
-import { comparePatents, uploadPatent, retrievePatents, unzipFile } from "../apiFunctions";
+import { comparePatents, uploadPatent, retrievePatents, unzipFile, startChat, sendMessage } from "../apiFunctions";
 import robotIcon from "../images/robot-solid.svg";
 import Chat from './chatbot'
 import NavBar from './NavBar'
@@ -13,7 +13,8 @@ import ReviewBar from "../components/submitNResultsSubComponent/review/ReviewBar
 
 const Dash = () => {
     const [selectedFile, setSelectedFile] = useState(null);
-    const [percentage, setPercentage] = useState(0);
+    const [syntaxPercentage, setSyntaxPercentage] = useState(0);
+    const [contextPercentage, setContextPercentage] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [text, setText] = useState('');
     const [inputPercentage, setInputPercentage] = useState('');
@@ -23,19 +24,25 @@ const Dash = () => {
         if (selectedFile) {
             setIsLoading(true);
             await uploadPatent(selectedFile);
-            let percentage = await comparePatents(); // Wait for comparePatents() to complete and return a value
-            setPercentage(percentage);
+            let percentage = await comparePatents();
+            setSyntaxPercentage(percentage);
             const response = await retrievePatents();
             if (response.ok) {
                 const blob = await response.blob();
                 const zipFile = new File([blob], 'patents.zip', { type: 'application/zip' });
                 const patents = await unzipFile(zipFile);
-                setPatents(patents); // Set the patents state with the retrieved patents
+                setPatents(patents);
             } else {
                 console.error('Failed to retrieve patents:', response.statusText);
             }
+            await startChat();
+            const { text, contextPercentage } = await sendMessage("Started Conversation from Compare with percentage", percentage);
+            console.log("Message", text);
+            setContextPercentage(contextPercentage);
             setIsLoading(false);
-            console.log('Percentage:', percentage); // Do something with the percentage value
+            // compare_message(text);
+            setText(text)
+            console.log('Percentage:', percentage);
         } else {
             console.error("No file selected");
         }
@@ -84,14 +91,14 @@ const Dash = () => {
                                         <div
                                             className="flex bg-white shadow-lg rounded-sm border border-gray-200 p-0 mb-2 px-8 pt-5">
                                             <div className="relative flex items-center flex-col">
-                                                <ReviewBar score={percentage}/>
+                                                <ReviewBar score={syntaxPercentage}/>
                                                 <h1 className="text-lg text-gray-700">Syntax Similarity</h1>
                                             </div>
                                         </div>
 
                                         <div className="flex bg-white shadow-lg rounded-sm border border-gray-200 px-8 pt-5">
                                             <div className="relative flex items-center flex-col">
-                                                <ReviewBar score={percentage}/>
+                                                <ReviewBar score={contextPercentage}/>
                                                 <span className="text-lg text-gray-700">Context Similarity</span>
                                             </div>
                                         </div>
@@ -104,7 +111,7 @@ const Dash = () => {
 
                 <div
                     className="flex-grow w-[50%] ml-10 border-3 border-solid border-gray-400 dark:border-gray-600 pl-4 mt-8 mb-10 h-400">
-                    <Chat/>
+                    <Chat botMessage={text}/>
                 </div>
 
 
