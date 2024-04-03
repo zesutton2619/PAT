@@ -135,6 +135,7 @@ def start_chat():
         print("Chat started")
         pat_chat.set_chat_id()
         pat_chat.upload_files()
+        pat_chat.create_assistant()
         return "Chat started successfully"
     except Exception as e:
         return "Error", 500  # Return error message and status code 500 if an error occurs
