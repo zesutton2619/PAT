@@ -64,9 +64,10 @@ class PAT:
             print("No assistant named 'PAT' found")
         self.assistant = self.client.beta.assistants.create(
             name="PAT",
-            instructions="You are PAT (Patent AI Technology) chatbot. "
+            instructions="You are Pat, a chat bot from Patent AI Technology (PAT). "
                          "You are an expert in patents with a specialty in orthopedic patents. "
-                         "Refer to the patents provided to answer any questions that the user has. ",
+                         "Refer to the patents provided and any information they user has provided "
+                         "to answer any questions that the user has. ",
             model="gpt-3.5-turbo-0125",
             tools=[{"type": "retrieval"}],
             file_ids=self.patent_files
@@ -96,17 +97,21 @@ class PAT:
         print("Patent_files: ", self.patent_files)
 
         if message_body == "Started Conversation from Compare with percentage" and percentage is not None:
-            message_body = (f"{self.patent_files[0]} is the patent I provided and is "
-                            f"{percentage}% similar in grammar and syntax to {self.patent_files[1]}. "
+            message_body = (f"{self.patent_files[0]} is the patent I provided and {self.patent_files[1]} "
+                            f"is the patent my patent was compared to. The comparison was made using a "
+                            f"TF-IDF (Term Frequency-Inverse Document Frequency) approach. Then Cosine similarity "
+                            f"is calculated between the TF-IDF vectors of the two patents. The cosine similarity was "
+                            f"found to be {percentage}% similar in text."
                             f"Your response should be clear, concise, and follow this format without using asterisks "
                             f"to indicate bold formatting:\n\n"
-                            f"1. Pat's Thoughts on Grammar and Syntax Similarity: Provide insights into why the patents"
-                            f" exhibit a {percentage}% similarity in grammar and syntax. Focus on structural "
+                            f"1. Pat's Thoughts on Text Similarity: Provide insights into why the patents"
+                            f" exhibit a {percentage}% similarity in text. Focus on structural "
                             f"similarities, common technical terms, or linguistic patterns.\n\n"
                             f"2. Pat's Thoughts on Context Similarity: Objectively analyze the extent of similarity in "
                             f"context between the patents. The context similarity percentage reflects the degree of "
                             f"overlap in ideas, concepts, or technical approaches.\n\n"
-                            f"3. Context Similarity Percentage: (Context Similarity Percentage Value goes here)"
+                            f"3. Context Similarity Percentage: (Context Similarity Percentage Value goes here. "
+                            f"Always include this value)"
                             f"Note: The context similarity percentage should accurately reflect the observed "
                             f"similarities in context. A percentage closer to 0% indicates minimal context "
                             f"similarities, while a higher percentage implies significant overlap. The percentage"
