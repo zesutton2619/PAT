@@ -1,8 +1,11 @@
-from sklearn.feature_extraction.text import TfidfVectorizer
 import os
+
+import PyPDF2
 import nltk
 from nltk.corpus import stopwords
-import PyPDF2
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+from encryption import encrypt_file, decrypt_file
 
 
 class PatentProcessor:
@@ -24,7 +27,9 @@ class PatentProcessor:
 
     def set_reference_patent(self):
         # Process the specified patent and set its TF-IDF vector as the reference
+        decrypt_file(self.reference_patent)
         patent_text = self.process_pdf(self.reference_patent)
+        encrypt_file(self.reference_patent)
         self.reference_vector = self.vectorizer.transform([patent_text])
 
     def set_reference_patent_filename(self, filename):

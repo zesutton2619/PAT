@@ -1,12 +1,15 @@
 import os
 import time
-from sklearn.metrics.pairwise import cosine_similarity
-from patentProcessing import PatentProcessor
+import zipfile
+
+from bleach import clean
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
+from sklearn.metrics.pairwise import cosine_similarity
+
 from pat import PAT
-import zipfile
-from bleach import clean
+from patentProcessing import PatentProcessor
+from encryption import encrypt_file, decrypt_file
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -29,7 +32,7 @@ def retrieve_patents():
     try:
         # Get the filenames of the PDF files from pat_chat.patent_file_names
         filenames = pat_chat.get_patent_file_names()
-        print(filenames)
+        print("retrieve filenames: ", filenames)
 
         if not filenames:
             return "No filenames provided", 400
@@ -40,7 +43,8 @@ def retrieve_patents():
         # Construct the full paths to the PDF files
         for filename in filenames:
             file_path = os.path.join(os.getcwd(), filename)  # Assuming filename contains the relative path
-            print("file_path: ", file_path)
+            decrypt_file(file_path)
+            print("retrieve file_path: ", file_path)
             if not os.path.exists(file_path):
                 return f"File '{filename}' not found", 404
             file_paths.append(file_path)
@@ -50,12 +54,22 @@ def retrieve_patents():
         with zipfile.ZipFile(zip_filename, 'w', compression=zipfile.ZIP_STORED) as zipf:
             for file_path in file_paths:
                 zipf.write(file_path, os.path.basename(file_path))
+                encrypt_file(file_path)
 
         # Send the zip file as an attachment
         return send_file(zip_filename, as_attachment=True, mimetype='application/zip')
 
     except Exception as e:
         print(str(e))
+        return str(e), 500
+
+
+@app.route('/remove_zipfile', methods=['GET'])
+def remove_zipfile():
+    try:
+        os.remove("patent_files.zip")
+        return "Successfully removed zipfile", 200
+    except Exception as e:
         return str(e), 500
 
 
@@ -75,8 +89,10 @@ def calculate_similarities():
 
         # Process PDFs and collect preprocessed texts
         for filename in patent_list:
+            decrypt_file(filename)
             preprocessed_text = patent_processor.process_pdf(filename)
             preprocessed_texts.append(preprocessed_text)
+            encrypt_file(filename)
 
         # Vectorize documents
         tfidf_vectors = patent_processor.vectorize_documents(preprocessed_texts)
@@ -84,18 +100,23 @@ def calculate_similarities():
         # Calculate similarity between the two patents
         similarity = cosine_similarity(tfidf_vectors[0], tfidf_vectors[1])[0][0]
 
-        pat_chat.set_patent_files(patent_list[1], patent_list[0])
+        top_result = (patent_list[1], similarity)
+
+        pat_chat.set_patent_files([top_result], patent_list[0])
 
         return jsonify((patent_list[1], similarity))
 
     else:
 
         patent_list = patent_processor.get_patent_list("Utility Patents")
+        print("patent list:", patent_list)
 
         # Process PDFs and collect preprocessed texts
         for filename in patent_list:
+            decrypt_file(filename)
             preprocessed_text = patent_processor.process_pdf(filename)
             preprocessed_texts.append(preprocessed_text)
+            encrypt_file(filename)
 
         # Vectorize documents and set reference patent
         tfidf_vectors = patent_processor.vectorize_documents(preprocessed_texts)
@@ -157,9 +178,11 @@ def upload_patent():
             if file.content_length > MAX_CONTENT_LENGTH:
                 print('File size exceeds maximum limit')
                 return 'File size exceeds maximum limit', 400
-
-            file.save(os.path.join('uploads', file.filename))
-            patent_processor.set_reference_patent_filename(file.filename)
+            filepath = os.path.join('uploads', file.filename)
+            file.save(filepath)
+            encrypt_file(filepath)
+            patent_processor.set_reference_patent_filename(filepath)
+            print("Reference patent path: ", patent_processor.reference_patent)
 
             return 'File uploaded successfully', 200
 
@@ -177,9 +200,10 @@ def upload_patent():
                 if file.content_length > MAX_CONTENT_LENGTH:
                     print('File size exceeds maximum limit')
                     return 'File size exceeds maximum limit', 400
-
-                file.save(os.path.join('uploads', file.filename))
-                patent_processor.set_direct_comparison_filenames('uploads\\'+file.filename)
+                filename = os.path.join('uploads', file.filename)
+                file.save(filename)
+                encrypt_file(filename)
+                patent_processor.set_direct_comparison_filenames(filename)
                 # Optionally, you can process each file here if needed
 
             else:

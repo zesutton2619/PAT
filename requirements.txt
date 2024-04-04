@@ -6,3 +6,4 @@ python-dotenv~=1.0.1
 scikit-learn~=1.4.1.post1
 nltk~=3.8.1
 bleach~=6.1.0
+cryptography~=42.0.5

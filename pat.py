@@ -1,11 +1,14 @@
 import os
-import threading
-import time
-import sqlite3
-from dotenv import load_dotenv
-from openai import OpenAI
 import random
 import re
+import sqlite3
+import threading
+import time
+
+from dotenv import load_dotenv
+from openai import OpenAI
+
+from encryption import encrypt_file, decrypt_file
 
 
 class PAT:
@@ -21,6 +24,9 @@ class PAT:
 
     def upload_files(self):
         existing_files = self.client.files.list()
+        print("Upload Files:", self.patent_file_names)
+        patent_file_names = self.get_patent_file_names()
+        print("Upload Patent Files:", patent_file_names)
         for patent_file_path in self.patent_file_names:
             # Check if the file is already uploaded
             existing_file = next(
@@ -31,12 +37,15 @@ class PAT:
                 self.patent_files.append(existing_file.id)
                 print("File exists")
             else:
+                decrypt_file(patent_file_path)
                 # If the file doesn't exist, upload it
                 file = self.client.files.create(
                     file=open(patent_file_path, "rb"),
                     purpose='assistants'
                 )
                 self.patent_files.append(file.id)
+
+                encrypt_file(patent_file_path)
 
         print("uploading files", self.patent_files)
 
@@ -147,6 +156,7 @@ class PAT:
         self.patent_file_names.append(user_patent_file)
         for patent in patent_files:
             self.patent_file_names.append(patent[0])
+        print("Patent Files set: ", self.patent_file_names)
 
     def get_patent_file_names(self):
         return self.patent_file_names
