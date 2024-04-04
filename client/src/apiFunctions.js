@@ -3,6 +3,40 @@ import JSZip from "jszip";
 let chatMessages = []; // State to hold chat messages
 
 
+export const formatPlaceholder = async (filePath) => {
+    return new Promise((resolve, reject) => {
+        // Create a new FileReader instance
+        const fileReader = new FileReader();
+
+        // Define a callback function to handle the FileReader onload event
+        fileReader.onload = (event) => {
+            try {
+                // Create a Blob object from the file content
+                const fileBlob = new Blob([event.target.result]);
+
+                // Create a File object from the Blob and file path
+                const file = new File([fileBlob], filePath.split('/').pop());
+
+                // Resolve the promise with the File object
+                resolve(file);
+            } catch (error) {
+                // Reject the promise if an error occurs
+                reject(error);
+            }
+        };
+
+        // Define a callback function to handle the FileReader onerror event
+        fileReader.onerror = (event) => {
+            // Reject the promise with the error
+            reject(event.target.error);
+        };
+
+        // Read the file as an ArrayBuffer
+        fileReader.readAsArrayBuffer(filePath);
+    });
+};
+
+
 export const unzipFile = async (zipFile) => {
     const zip = await JSZip.loadAsync(zipFile);
     const patents = [];

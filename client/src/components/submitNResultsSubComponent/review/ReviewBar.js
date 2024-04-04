@@ -34,6 +34,7 @@ const ReviewBar = (props) => {
                             transformOrigin: "center center",
                             stroke: calcColor(value, 0, 120),
                             strokeWidth: 5, // Adjust the path width here
+                            transition: 'stroke-dashoffset 2s ease 0s', // Adjust the animation duration here
                         },
                         text: {
                             fill: "#000",

@@ -25,7 +25,7 @@ const Init = ({ onFileSelect, onDirectFileSelect }) => {
                 <div
                     className="max-w-md w-full p-3 bg-white shadow-md border border-gray-700 rounded-lg overflow-hidden transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                     <div className="p-4">
-                        <h2 className="text-3xl font-bold text-gray-700 mb-4">Upload Patent</h2>
+                        <h2 className="text-3xl font-bold text-gray-700 mb-4 mx-auto">Upload Patent</h2>
                         <div
                             className="flex items-center justify-center bg-gray-100 border-2 border-gray-300 rounded-lg p-4">
                             <label htmlFor="file-upload"
