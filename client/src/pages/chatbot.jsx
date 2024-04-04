@@ -33,7 +33,7 @@ const Chat = () => {
 
 
     return (
-        <div className="flex flex-col border border-gray-700 rounded-lg shadow-lg p-4 mr-7" style={{ height: '42rem' }}>
+        <div className="flex flex-col border border-gray-700 rounded-lg shadow-lg p-4 mr-7 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105" style={{ height: '42rem' }}>
             <div className="chat-header">
                 Talk to PAT
                 <hr className="header-divider" />

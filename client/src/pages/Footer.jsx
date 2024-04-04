@@ -1,9 +1,20 @@
 import React from 'react';
+import Dash from "./PatDashboard";
 
 const Footer = () => {
+    const scrollToHome = () => {
+        const homeElement = document.getElementById('home');
+        homeElement.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    const scrollPat = () => {
+        const homeElement = document.getElementById('patDis');
+        homeElement.scrollIntoView({ behavior: 'smooth' });
+    };
     return (
         <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
             <button type="button"
+                    onClick={scrollToHome}
                     className="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x hover:bg-gray-50 dark:hover:bg-gray-800 group dark:border-gray-600">
                 <svg
                     className="w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-500"
@@ -16,6 +27,7 @@ const Footer = () => {
                     className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-500">Home</span>
             </button>
             <button type="button"
+                    onClick={scrollPat}
                     className="inline-flex flex-col items-center justify-center px-5 border-e border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 group dark:border-gray-600">
                 <svg
                     className="w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-500"

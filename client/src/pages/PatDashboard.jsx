@@ -47,7 +47,7 @@ const Dash = () => {
     return (
 
         <div>
-            <nav className="border-gray-200 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+            <nav id={"home"} className="border-gray-200 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
                 <NavBar/>
             </nav>
 
@@ -62,13 +62,13 @@ const Dash = () => {
                                     onClick={handleCompare}
                                     className="flex bg-gray-700 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg transform hover:scale-110 transition duration-300 ease-in-out mr-4"
                                 >
-                                    Direct Compare
+                                    COMPARE ALL
                                 </button>
                                 <button
                                     onClick={handleCompare}
                                     className="flex bg-gray-700 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg transform hover:scale-110 transition duration-300 ease-in-out"
                                 >
-                                    General Compare
+                                    COMPARE PATENTS
                                 </button>
                             </div>
                         </div>
@@ -82,19 +82,32 @@ const Dash = () => {
                                 ) : (
                                     <div className="flex flex-col items-center">
                                         <div
-                                            className="flex bg-white shadow-lg rounded-sm border border-gray-200 p-0 mb-2 px-8 pt-5">
+                                            className="flex bg-white shadow-lg rounded-sm border border-gray-200 p-0 mb-2 px-8 pt-5 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                             <div className="relative flex items-center flex-col">
                                                 <ReviewBar score={percentage}/>
-                                                <h1 className="text-lg text-gray-700">Syntax Similarity</h1>
+                                                <h1 className="text-2xl font-bold text-gray-700 mb-4">Syntax
+                                                    Similarity</h1>
                                             </div>
                                         </div>
 
-                                        <div className="flex bg-white shadow-lg rounded-sm border border-gray-200 px-8 pt-5">
+                                        <div
+                                            className="flex bg-white shadow-lg rounded-sm border border-gray-200 px-8 pt-5 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                             <div className="relative flex items-center flex-col">
                                                 <ReviewBar score={percentage}/>
-                                                <span className="text-lg text-gray-700">Context Similarity</span>
+                                                <span className="text-2xl font-bold text-gray-700 mb-4">Context Similarity</span>
                                             </div>
                                         </div>
+
+                                        <div
+                                            className="flex bg-white shadow-lg rounded-sm border border-gray-200 px-8 p-5 w-full transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105 mt-7">
+                                            <div className="flex flex-col items-center justify-center mx-auto">
+                                                <h1 className="text-lg text-gray-600 font-bold mb-2">Most Similar Patent
+                                                    Found:</h1>
+                                                <p className="text-lg text-gray-600">None</p>
+                                            </div>
+                                        </div>
+
+
                                     </div>
                                 )}
                             </div>
@@ -111,8 +124,14 @@ const Dash = () => {
             </div>
 
 
-            <div className="flex mt-5 pt-10">
+            <div id={"patDis"} className="flex mt-5 pt-10">
                 <Display patents={patents}/>
+            </div>
+
+            <div className="min-h-screen">
+                <div className="flex mt-5 pt-10 h-full">
+                    {/* Content */}
+                </div>
             </div>
 
 

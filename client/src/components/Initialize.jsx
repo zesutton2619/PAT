@@ -12,24 +12,49 @@ const Init = ({ onFileSelect }) => {
     };
 
     return (
+
         <div className="flex justify-center items-center mt-7">
             <div className="container flex flex-col items-center">
-                <div className="max-w-md w-full p-3 bg-white shadow-md border border-gray-700 rounded-lg overflow-hidden mb-8">
+                <div
+                    className="max-w-md w-full p-3 bg-white shadow-md border border-gray-700 rounded-lg overflow-hidden transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                     <div className="p-4">
-                        <h2 className="text-3xl font-bold text-gray-800 mb-4">Upload Patent</h2>
-                        <div className="flex items-center justify-center bg-gray-100 border-2 border-gray-300 rounded-lg p-4">
-                            <label htmlFor="file-upload" className="cursor-pointer bg-white rounded-lg px-4 py-2 border border-gray-400 text-gray-800 hover:bg-gray-50 transition duration-300 flex-grow-0 flex-shrink-0">
+                        <h2 className="text-3xl font-bold text-gray-700 mb-4">Upload Patent</h2>
+                        <div
+                            className="flex items-center justify-center bg-gray-100 border-2 border-gray-300 rounded-lg p-4">
+                            <label htmlFor="file-upload"
+                                   className="cursor-pointer bg-white rounded-lg px-4 py-2 border border-gray-400 text-gray-800 hover:bg-gray-50 transition duration-300 flex-grow-0 flex-shrink-0">
                                 Choose a file
                                 <input id="file-upload" type="file" className="sr-only" onChange={handleFileChange}/>
                             </label>
-                            <span className="ml-3 flex-grow">{selectedFile ? selectedFile.name : "No file selected"}</span>
+                            <span
+                                className="ml-3 flex-grow">{selectedFile ? selectedFile.name : "No file selected"}</span>
                         </div>
                     </div>
                 </div>
-                <div className="max-w-md w-full p-3 bg-white border border-gray-700 shadow-md rounded-lg overflow-hidden mb-4">
+
+                <div
+                    className="max-w-md w-full p-3 bg-white shadow-md border border-gray-700 rounded-lg overflow-hidden transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105 mt-5">
                     <div className="p-4">
-                        <h2 className="text-3xl font-bold text-gray-800 mb-4">Select Category</h2>
-                        <div className="flex items-center justify-center bg-gray-100 border-2 border-gray-300 rounded-lg p-4">
+                        <h2 className="text-3xl font-bold text-gray-700 mb-4">Add patent</h2>
+                        <div
+                            className="flex items-center justify-center bg-gray-100 border-2 border-gray-300 rounded-lg p-4">
+                            <label htmlFor="file-upload2"
+                                   className="cursor-pointer bg-white rounded-lg px-4 py-2 border border-gray-400 text-gray-800 hover:bg-gray-50 transition duration-300 flex-grow-0 flex-shrink-0">
+                                Choose a file
+                                <input id="file-upload2" type="file" className="sr-only" onChange={handleFileChange}/>
+                            </label>
+                            <span
+                                className="ml-3 flex-grow">{selectedFile ? selectedFile.name : "No file selected"}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    className="max-w-md w-full p-3 bg-white border border-gray-700 shadow-md rounded-lg overflow-hidden mb-4 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105 mt-5">
+                    <div className="p-4">
+                        <h2 className="text-3xl font-bold text-gray-700 mb-4">Select Category</h2>
+                        <div
+                            className="flex items-center justify-center bg-gray-100 border-2 border-gray-300 rounded-lg p-4">
                             <div className="relative inline-block text-left w-full">
                                 <div>
                                     <button
@@ -43,7 +68,8 @@ const Init = ({ onFileSelect }) => {
                                     </button>
                                 </div>
                                 {selectedOption && (
-                                    <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                                    <div
+                                        className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
                                         <div
                                             className="py-1"
                                             role="menu"
@@ -78,18 +104,7 @@ const Init = ({ onFileSelect }) => {
                         </div>
                     </div>
                 </div>
-                <div className="max-w-md w-full p-3 bg-white shadow-md border border-gray-700 rounded-lg overflow-hidden">
-                    <div className="p-4">
-                        <h2 className="text-3xl font-bold text-gray-800 mb-4">Add patent</h2>
-                        <div className="flex items-center justify-center bg-gray-100 border-2 border-gray-300 rounded-lg p-4">
-                            <label htmlFor="file-upload2" className="cursor-pointer bg-white rounded-lg px-4 py-2 border border-gray-400 text-gray-800 hover:bg-gray-50 transition duration-300 flex-grow-0 flex-shrink-0">
-                                Choose a file
-                                <input id="file-upload2" type="file" className="sr-only" onChange={handleFileChange}/>
-                            </label>
-                            <span className="ml-3 flex-grow">{selectedFile ? selectedFile.name : "No file selected"}</span>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     );
