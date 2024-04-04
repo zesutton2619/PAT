@@ -11,8 +11,33 @@
     }
 }
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
 .typing-animation {
     animation: typing 1s steps(40, end);
     overflow: hidden;
     white-space: nowrap;
+}
+
+.animate-fade-in {
+    animation: fadeIn ease-in-out 1s;
 }
