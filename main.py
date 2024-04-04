@@ -135,7 +135,7 @@ def calculate_similarities():
 
     else:
 
-        patent_list = patent_processor.get_patent_list("Utility Patents")
+        patent_list = patent_processor.get_patent_list(os.path.join("Patents", "Utility Patents"))
         print("patent list:", patent_list)
 
         # Process PDFs and collect preprocessed texts
