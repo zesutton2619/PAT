@@ -19,6 +19,26 @@ export const unzipFile = async (zipFile) => {
     return patents;
 };
 
+export const removeZipFile = async () => {
+    try{
+        const response = await fetch('http://localhost:5000/remove_zipfile', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            console.log("Successfully removed zip file");
+        } else {
+            console.error('Failed to remove zip file:', response.statusText);
+        }
+    }
+    catch(error){
+        console.error('Error retrieving patents:', error);
+    }
+}
+
 // Function to handle form submission
 export const handleSubmit = async (event) => {
     event.preventDefault();
