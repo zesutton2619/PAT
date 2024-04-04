@@ -9,6 +9,12 @@ cipher = Fernet(cipher_key)
 
 
 def encrypt_file(file_path):
+    """
+    Encrypts a file using Fernet symmetric encryption.
+
+    Parameters:
+    - file_path (str): File path of the file to be encrypted.
+    """
     with open(file_path, 'rb') as file:
         plaintext = file.read()
 
@@ -24,6 +30,12 @@ def encrypt_file(file_path):
 
 
 def decrypt_file(file_path):
+    """
+    Decrypts a file previously encrypted with Fernet symmetric encryption.
+
+    Parameters:
+    - file_path (str): File path of the file to be decrypted.
+    """
     # Read the encrypted data from the file
     with open(file_path, 'rb') as file:
         encrypted_text = file.read()
