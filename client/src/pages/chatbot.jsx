@@ -1,20 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
+import {sendMessage} from "../apiFunctions";
 import './../style/chat.css'; // Import CSS file for styling
 import robotIcon from "../images/robot-solid.svg";
+import "./PatDashboard"
 
-const Chat = () => {
+
+const Chat = ({botMessage}) => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const initialBotMessageSent = useRef(false);
+
 
     useEffect(() => {
         if (!initialBotMessageSent.current) {
             setMessages(prevMessages => [...prevMessages, { text: 'Hello! I\'m PAT, your patent comparison assistant. Please upload your patent document so I can compare it with others related to yours. Let\'s get started!', sender: 'bot', avatar: 'bot-avatar.png' }]);
             initialBotMessageSent.current = true;
+        } else if (botMessage) {
+            setMessages(prevMessages => [...prevMessages, { text: botMessage, sender: 'bot', avatar: 'bot-avatar.png' }]);
         }
-    }, []);
+    }, [botMessage]);
 
-    const handleMessageSend = () => {
+    const handleMessageSend = async () => {
         if (newMessage.trim() === '') return;
         setMessages(prevMessages => [...prevMessages, { text: newMessage, sender: 'user' }]);
         setNewMessage('');
@@ -22,11 +28,13 @@ const Chat = () => {
         // Simulate typing indicator
         setMessages(prevMessages => [...prevMessages, { text: '...', sender: 'bot', typing: true }]);
 
+        const { text, contextPercentage } = await sendMessage(newMessage);
+
         // Simulate bot response
         setTimeout(() => {
             setMessages(prevMessages => [
                 ...prevMessages.slice(0, -1), // Remove the typing indicator
-                { text: 'Hello!', sender: 'bot', avatar: 'bot-avatar.png' }
+                { text: text, sender: 'bot', avatar: 'bot-avatar.png' }
             ]);
         }, 1000);
     };

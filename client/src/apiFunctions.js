@@ -19,31 +19,25 @@ export const unzipFile = async (zipFile) => {
     return patents;
 };
 
-export const sendMessage = async (message) => {
-    if (message.trim() !== "") {
-        try {
-            const response = await fetch('http://localhost:5000/send_message', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ message }) // Send the message in JSON format
-            });
-
-            if (response.ok) {
-                console.log("Message Received:", response);
-                // Extract the response data as text
-                return await response.text(); // Return the received message
-            } else {
-                console.log("Message not received.");
-                return null; // Return null if message not received
+export const removeZipFile = async () => {
+    try{
+        const response = await fetch('http://localhost:5000/remove_zipfile', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
             }
-        } catch (error) {
-            console.log("Error receiving message:", error);
-            return null; // Return null if error occurs
+        });
+
+        if (response.ok) {
+            console.log("Successfully removed zip file");
+        } else {
+            console.error('Failed to remove zip file:', response.statusText);
         }
     }
-};
+    catch(error){
+        console.error('Error retrieving patents:', error);
+    }
+}
 
 // Function to handle form submission
 export const handleSubmit = async (event) => {
@@ -62,37 +56,57 @@ export const handleSubmit = async (event) => {
     }
 };
 
-export const uploadPatent = async (file) => {
+export const uploadPatent = async (files) => {
     try {
-        const formData = new FormData();
-        formData.append('file', file);
+        console.log("Files:", files);
+        console.log("Files length:", files.length);
+        console.log("Files type:", typeof files);
 
-        const response = await fetch('http://localhost:5000/upload_patent', {
-            method: 'POST',
-            body: formData
-        });
+        if (files && files.length > 0) {
+            const formData = new FormData();
 
-        if (response.ok) {
-            console.log('File uploaded successfully');
-            // Optionally, return any response data
-            // const data = await response.json();
-            // return data;
+            // Convert files to an array
+            const filesArray = Array.from(files);
+
+            filesArray.forEach((file, index) => {
+                console.log(`File ${index}:`, file);
+                formData.append(`file${index}`, file);
+            });
+
+            for (const key of formData.entries()) {
+                console.log(key[0] + ', ' + key[1]);
+            }
+
+            const response = await fetch('http://localhost:5000/upload_patent', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                console.log('File(s) uploaded successfully');
+            } else {
+                console.error('Failed to upload file(s)');
+            }
         } else {
-            console.error('Failed to upload file');
+            console.error('No files provided');
+
         }
     } catch (error) {
-        console.error('Error uploading file:', error);
+        console.error('Error uploading file(s):', error);
     }
 };
 
-export const comparePatents = async () => {
+
+export const comparePatents = async (directComparison = false) => {
     try {
         // Make a GET request to the Flask route
+        const requestBody = {directComparison}
         const response = await fetch('http://localhost:5000/calculate-similarities', {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify(requestBody)
         });
 
         if (response.ok) {
@@ -138,6 +152,62 @@ export const retrievePatents = async () => {
 };
 
 
-export const startChat = async (event) => {
-    console.log("Chat started")
-}
+export const startChat = async () => {
+    try {
+        console.log("Chat started");
+        const response = await fetch('http://localhost:5000/start_chat');
+        if (response.ok) {
+            console.log("Chat started successfully");
+        } else {
+            console.error("Error starting chat:", response.statusText);
+        }
+    } catch (error) {
+        console.error("Error starting chat:", error);
+    }
+};
+
+// export const compare_message = (firstMessage) => {
+//     setMessages(prevMessages => [...prevMessages, { text: {firstMessage}, sender: 'bot', avatar: 'bot-avatar.png' }]);
+// };
+
+export const sendMessage = async (message, percentage = null) => {
+    if (message.trim() !== "") {
+        try {
+            console.log("Sending Message: ", message)
+            const requestBody = { message };
+            if (percentage !== null) {
+                requestBody.percentage = percentage;
+            }
+
+            const response = await fetch('http://localhost:5000/send_message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody) // Send the message and percentage in JSON format if percentage is provided
+            });
+
+            if (response.ok) {
+                // Extract the response data as JSON
+                const data = await response.json();
+                const responseData = { text: data.text, context_percentage: data.context_percentage };
+                console.log("Message Received:", responseData);
+                // Ensure context_percentage is present in the response data
+                // console.log("Response text: ", responseData.text)
+                console.log("Context Percentage: ", responseData.context_percentage)
+                // Return an object containing both the received message and context percentage
+                return {
+                    text: responseData.text,
+                    contextPercentage: responseData.context_percentage
+                };
+            } else {
+                console.log("Message not received.");
+                return null; // Return null if message not received
+            }
+        } catch (error) {
+            console.log("Error receiving message:", error);
+            return null; // Return null if error occurs
+        }
+    }
+};
+
