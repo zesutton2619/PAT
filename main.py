@@ -23,12 +23,27 @@ MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB
 
 # Function to check if the file extension is allowed
 def allowed_file(filename):
+    """
+    Check if the file extension is allowed.
+
+    Parameters:
+    filename (str): The name of the file.
+
+    Returns:
+    bool: True if the file extension is allowed, False otherwise.
+    """
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route('/retrieve_patents', methods=['GET'])
 def retrieve_patents():
+    """
+    Retrieve patents and send them as a zip file.
+
+    Returns:
+    file: A zip file containing the patents.
+    """
     try:
         # Get the filenames of the PDF files from pat_chat.patent_file_names
         filenames = pat_chat.get_patent_file_names()
@@ -66,6 +81,12 @@ def retrieve_patents():
 
 @app.route('/remove_zipfile', methods=['GET'])
 def remove_zipfile():
+    """
+    Remove the generated zip file.
+
+    Returns:
+    str: Success message if the zipfile is removed, otherwise an error message.
+    """
     try:
         os.remove("patent_files.zip")
         return "Successfully removed zipfile", 200
@@ -75,6 +96,12 @@ def remove_zipfile():
 
 @app.route('/calculate-similarities', methods=['POST'])
 def calculate_similarities():
+    """
+    Calculate similarities between patents.
+
+    Returns:
+    json: A JSON object containing the top result.
+    """
     start_time = time.time()  # Start the timer
     direct_comparison = request.json.get('directComparison')
     preprocessed_texts = []
@@ -156,6 +183,12 @@ def calculate_similarities():
 
 @app.route('/upload_patent', methods=['POST'])
 def upload_patent():
+    """
+    Upload a patent file.
+
+    Returns:
+    str: Success message if the file is uploaded successfully, otherwise an error message.
+    """
     pat_chat.reset_pat_chat()
     patent_processor.reset_direct_comparison_filenames()
 
@@ -215,6 +248,12 @@ def upload_patent():
 
 @app.route('/start_chat')
 def start_chat():
+    """
+    Start a chat session.
+
+    Returns:
+    str: Success message if the chat is started successfully, otherwise an error message.
+    """
     try:
         print("Chat started")
         pat_chat.set_chat_id()
@@ -227,7 +266,12 @@ def start_chat():
 
 @app.route('/send_message', methods=['POST'])
 def send_message():
+    """
+    Send a message to the chatbot.
 
+    Returns:
+    json: A JSON object containing the response and context percentage.
+    """
     message = request.json.get('message')
     percentage = request.json.get('percentage')
 
