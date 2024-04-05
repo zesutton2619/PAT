@@ -12,6 +12,7 @@ import ReviewBar from "../components/submitNResultsSubComponent/review/ReviewBar
 import placeholder from "./../components/placeholder-pdf.pdf"
 import { Helmet } from 'react-helmet';
 import PATicon from './../images/pat_12.png';
+import PatManager from "./patentManager";
 
 
 
@@ -212,7 +213,7 @@ const Dash = () => {
 
                 <div className="min-h-screen">
                     <div className="flex mt-5 pt-10 h-full">
-                        {/* Content */}
+                        <PatManager />
                     </div>
                 </div>
 
