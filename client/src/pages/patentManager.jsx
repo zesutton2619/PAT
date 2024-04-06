@@ -86,7 +86,7 @@ const PatManager = () => {
 
         return (
             <div className="flex w-screen" style={{height: '42rem'}}>
-                <div className="w-1/2 h-full">
+                <div className="w-1/2 h-full" id={"results"}>
                     <div
                         className="relative flex bg-white shadow-lg rounded-sm border border-gray-200 ml-5 mr-1 h-full pr-10 ">
                         <div

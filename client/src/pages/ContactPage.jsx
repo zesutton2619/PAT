@@ -8,7 +8,7 @@ const ContactPage = () => {
             <nav className="border-gray-200 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
                 <NavBar/>
             </nav>
-            <div className="flex justify-center mt-10  mx-20 animate-fade-in">
+            <div className="flex justify-center mt-10  mx-20 animate-fade-in animate-fade-in transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                 <div className="bg-white rounded-lg shadow-xl p-8 w-5/6">
                     <h2 className="text-5xl font-bold mb-10 flex justify-center text-gray-700 animate-bounce">Our
                         Team!</h2>
@@ -44,7 +44,7 @@ const ContactPage = () => {
                                  className="rounded-lg mb-2 w-64 h-auto"
                                  alt="Logo"/>
                             <p className="text-xl text-gray-700 font-semibold">Zach Sutton</p>
-                            <p className="text-sm text-gray-700 font-semibold">Backend Developer</p>
+                            <p className="text-sm text-gray-700 font-semibold">Full Stack Developer</p>
                             <a
                                 href="https://www.linkedin.com/in/zachary-sutton-1648b9227/"
                                 target="_blank"

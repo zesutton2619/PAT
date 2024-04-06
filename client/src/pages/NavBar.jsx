@@ -22,9 +22,8 @@ const Navbar = () => {
                     <li>
                         <a href="#" className="flex items-center space-x-3 rtl:space-x-reverse">
                             <img src={require('../images/patLogo.png')}
-                                 className="min-h-30 w-auto sm:h-20  filter invert" alt="Logo"/>
-                            <span
-                                className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">PAT, the Patent AI</span>
+                                 className=" w-auto h-20 filter invert" alt="Logo"/>
+
                         </a>
                     </li>
                     <li>
