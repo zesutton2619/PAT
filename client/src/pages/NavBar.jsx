@@ -14,7 +14,7 @@ const Navbar = () => {
                     </li>
                     <li>
 
-                        <a href="https://github.com/zesutton2619/"
+                        <a href="https://github.com/zesutton2619/PAT"
                            target="_blank"
                            className="block py-2 mt-7 px-3 md:p-0 text-gray-200 bg-gray-700 rounded md:bg-transparent ">About
                             PAT</a>

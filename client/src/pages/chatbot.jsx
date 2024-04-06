@@ -3,6 +3,7 @@ import {sendMessage} from "../apiFunctions";
 import './../style/chat.css'; // Import CSS file for styling
 import robotIcon from "../images/robot-solid.svg";
 import "./PatDashboard"
+import chatIcon from "../images/comment-solid.svg";
 
 
 const Chat = ({botMessage}) => {
@@ -41,7 +42,9 @@ const Chat = ({botMessage}) => {
 
 
     return (
-        <div className="flex flex-col border border-gray-700 rounded-lg shadow-lg p-4 mr-7 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105" style={{ height: '42rem' }}>
+        <div
+            className="flex flex-col border border-gray-700 rounded-lg shadow-lg p-4 mr-7 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105"
+            style={{height: '42rem'}}>
             <div className="chat-header">
                 Talk to PAT
                 <hr className="header-divider" />
@@ -50,7 +53,7 @@ const Chat = ({botMessage}) => {
                 {messages.map((message, index) => (
                     <div key={index} className={`message ${message.sender === 'user' ? 'user' : 'bot'}`}>
                         {message.sender === 'bot' && message.avatar && (
-                            <img src={robotIcon} alt="Bot Avatar" className="avatar mb-5" />
+                            <img src={robotIcon} alt="Bot Avatar" className="avatar mb-5"/>
                         )}
                         <div className="message-text ml-2">{message.text}</div>
                     </div>

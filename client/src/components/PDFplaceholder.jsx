@@ -13,7 +13,7 @@ const PDFplaceholder = ({ pdfUrl }) => {
     };
 
     return (
-        <div style={{ width: '100%', maxHeight: '500px', overflow: 'auto' }}>
+        <div style={{ width: '100%', maxHeight: '550px', overflow: 'hidden' }}>
             <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
                 {Array.from(new Array(numPages), (_, index) => (
                     <Page
@@ -30,5 +30,3 @@ const PDFplaceholder = ({ pdfUrl }) => {
 };
 
 export default PDFplaceholder;
-
-

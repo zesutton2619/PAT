@@ -1,25 +1,32 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import ReviewsProvider from "./ReviewsProvider";
 
 const ReviewBar = (props) => {
     const { score } = props;
+    const [percentage, setPercentage] = useState(0);
 
-    const calcColor = (percent, start, end) => {
-        let a = percent / 100,
-            b = (end - start) * a,
-            c = b + start;
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setPercentage(prevPercentage => {
+                if (prevPercentage >= score) {
+                    clearInterval(interval);
+                    return score;
+                }
+                return prevPercentage + 1;
+            });
+        }, 100);
 
-        return "hsl(" + c + ", 100%, 50%)";
-    };
+        return () => clearInterval(interval);
+    }, [score]);
 
     return (
         <ReviewsProvider valueStart={0} valueEnd={score}>
             {(value) => (
                 <CircularProgressbar
                     value={value}
-                    text={`${value}%`}
+                    text={`${percentage}%`}
                     circleRatio={0.7}
                     styles={{
                         trail: {
@@ -32,9 +39,8 @@ const ReviewBar = (props) => {
                             strokeLinecap: "butt",
                             transform: "rotate(-126deg)",
                             transformOrigin: "center center",
-                            stroke: calcColor(value, 0, 120),
+                            stroke: `hsl(${value * 1.2}, 100%, 50%)`,
                             strokeWidth: 5, // Adjust the path width here
-                            transition: 'stroke-dashoffset 2s ease 0s', // Adjust the animation duration here
                         },
                         text: {
                             fill: "#000",
@@ -47,7 +53,7 @@ const ReviewBar = (props) => {
                         },
                     }}
                     strokeWidth={5}
-                    svgStyle={{ maxHeight: "200px", maxWidth: "400px" }} // Adjusted SVG height and width
+                    value={percentage}
                 />
             )}
         </ReviewsProvider>
@@ -55,3 +61,4 @@ const ReviewBar = (props) => {
 };
 
 export default ReviewBar;
+

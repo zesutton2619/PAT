@@ -152,7 +152,8 @@ const Dash = () => {
                                                         className='h-8 w-8 bg-gray-700 rounded-full animate-bounce [animation-delay:-0.3s]'></div>
                                                     <div
                                                         className='h-8 w-8 bg-gray-700 rounded-full animate-bounce [animation-delay:-0.15s]'></div>
-                                                    <div className='h-8 w-8 bg-gray-700 rounded-full animate-bounce'></div>
+                                                    <div
+                                                        className='h-8 w-8 bg-gray-700 rounded-full animate-bounce'></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -181,7 +182,8 @@ const Dash = () => {
                                                 <div
                                                     className="flex bg-white shadow-lg rounded-sm border border-gray-200 px-8 p-5 w-full transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105 mt-7">
                                                     <div className="flex flex-col items-center justify-center mx-auto">
-                                                        <h1 className="text-lg text-gray-600 font-medium mb-2">Most Similar
+                                                        <h1 className="text-lg text-gray-600 font-medium mb-2">Most
+                                                            Similar
                                                             Patent Found:</h1>
                                                         <p className="text-lg text-gray-700 font-bold">{foundSimilarPatent}</p>
                                                     </div>
@@ -210,10 +212,9 @@ const Dash = () => {
                 </div>
 
 
-
-                <div className="min-h-screen">
+                <div className="h-auto m-10 mb-28">
                     <div className="flex mt-5 pt-10 h-full">
-                        <PatManager />
+                        <PatManager/>
                     </div>
                 </div>
 
@@ -221,11 +222,10 @@ const Dash = () => {
                 <div
                     className="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
                     <Footer/>
-
                 </div>
 
-
             </div>
+
         </div>
 
 
