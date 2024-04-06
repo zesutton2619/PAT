@@ -42,6 +42,11 @@ Refer to: https://github.com/zesutton2619/PAT/wiki/Patent-AI-Technology-(PAT)-AP
 
 Refer to: https://github.com/zesutton2619/PAT/wiki/Patent-AI-Technology-React-App
 
+### Docker
+1. Clone the repository
+2. CD to repository
+3. docker compose up --build
+
 ## Development
 
 Frontend:
