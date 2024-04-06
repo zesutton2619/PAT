@@ -20,14 +20,17 @@ pat_chat = PAT()
 # Define allowed file extensions and maximum file size
 ALLOWED_EXTENSIONS = {'pdf'}
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB
+patent_files = os.environ.get("PATENT_FILES")
 
-directory_to_watch = os.path.abspath("C:\\Users\\ph-mo\\OneDrive\\Desktop\\patBackend-2.0\\Patents\\Utility Patents")  # Change this to your directory
+directory_to_watch = os.path.abspath(patent_files)  # Change this to your directory
+
 
 class DirectoryWatchHandler(FileSystemEventHandler):
     def on_any_event(self, event):
         print(f"Event triggered: {event}")  # Debugging line
         print("Updating files list...")  # Debugging line
-        update_files_json()
+        update_files_json(directory_to_watch)
+
 
 # Function to check if the file extension is allowed
 def allowed_file(filename):
@@ -52,7 +55,7 @@ def update_files_json(directory_to_watch):
         # Use os.walk to iterate through each directory and subdirectory
         for root, dirs, files in os.walk(directory_to_watch):
             # Combine the directory path with each filename to get the full path
-            #full_paths = [os.path.join(root, name) for name in files]
+            # full_paths = [os.path.join(root, name) for name in files]
             all_files.extend(files)
 
         # Optionally, sort files alphabetically; adjust as needed
@@ -64,6 +67,7 @@ def update_files_json(directory_to_watch):
         print("Files list updated in files.json")
     except Exception as e:
         print(f"Error updating the files list: {e}")
+
 
 @app.route('/retrieve_patents', methods=['GET'])
 def retrieve_patents():
@@ -320,6 +324,7 @@ def send_message():
     # Return both the response and context percentage
     return jsonify({'text': response, 'context_percentage': context_percentage}), 200
 
+
 @app.route('/files', methods=['GET'])
 def get_files():
     print("Sending file json to list component")
@@ -351,7 +356,8 @@ def get_pdf():
         # Initialize a list to store the file paths
 
         # Construct the full paths to the PDF files
-        file_path = os.path.join(os.getcwd(), 'Patents/Utility Patents', filename)  # Assuming filename contains the relative path
+        file_path = os.path.join(os.getcwd(), 'Patents/Utility Patents',
+                                 filename)  # Assuming filename contains the relative path
         decrypt_file(file_path)
         print("retrieve file_path: ", file_path)
         if not os.path.exists(file_path):
@@ -408,7 +414,6 @@ def add_patent():
         else:
             print('Invalid file type')
             return 'Invalid file type', 400
-
 
 
 if __name__ == '__main__':
