@@ -137,26 +137,27 @@ class PAT:
         print("Patent_files: ", self.patent_files)
 
         if message_body == "Started Conversation from Compare with percentage" and percentage is not None:
-            message_body = (f"{self.patent_files[0]} is the patent I provided and {self.patent_files[1]} "
-                            f"is the patent my patent was compared to. The comparison was made using a "
-                            f"TF-IDF (Term Frequency-Inverse Document Frequency) approach. Then Cosine similarity "
-                            f"is calculated between the TF-IDF vectors of the two patents. The cosine similarity was "
-                            f"found to be {percentage}% similar in text."
-                            f"Your response should be clear, concise, and follow this format without using asterisks "
-                            f"to indicate bold formatting:\n\n"
-                            f"1. Pat's Thoughts on Text Similarity: Provide insights into why the patents"
-                            f" exhibit a {percentage}% similarity in text. Focus on structural "
-                            f"similarities, common technical terms, or linguistic patterns.\n\n"
-                            f"2. Pat's Thoughts on Context Similarity: Objectively analyze the extent of similarity in "
-                            f"context between the patents. The context similarity percentage reflects the degree of "
-                            f"overlap in ideas, concepts, or technical approaches.\n\n"
-                            f"3. Context Similarity Percentage: (Context Similarity Percentage Value goes here. "
-                            f"Always include this value)"
-                            f"Note: The context similarity percentage should accurately reflect the observed "
-                            f"similarities in context. A percentage closer to 0% indicates minimal context "
-                            f"similarities, while a higher percentage implies significant overlap. The percentage"
-                            f"should not be a range only one value. You're not required to explain the percentage "
-                            f"separately; it should reflect your analysis directly")
+            message_body = (f"{self.patent_files[0]} is the patent provided, and {self.patent_files[1]} is the patent "
+                            f"it was compared to. "
+                            f"The comparison utilized a TF-IDF (Term Frequency-Inverse Document Frequency) approach, followed by the calculation "
+                            f"of Cosine similarity between the TF-IDF vectors of the two patents. The resulting cosine similarity indicates a "
+                            f"{percentage}% textual similarity between the patents.\n\n"
+
+                            f"Your response should be clear, concise, and follow this format without using asterisks or hashtags for special "
+                            f"formatting:\n\n"
+
+                            f"1. Pat's Thoughts on Text Similarity: Provide insights into why the patents exhibit a {percentage}% similarity in "
+                            f"text. "
+                            f"Focus on structural similarities, common technical terms, or linguistic patterns.\n\n"
+
+                            f"2. Pat's Thoughts on Context Similarity: Objectively analyze the extent of similarity in context between the patents. "
+                            f"The context similarity percentage reflects the degree of overlap in ideas, concepts, or technical approaches.\n\n"
+
+                            f"3. Context Similarity Percentage: (Please provide a context similarity percentage from 0% to 100%)\n\n"
+
+                            f"Note: The context similarity percentage should accurately reflect the observed similarities in context. "
+                            f"A percentage closer to 0% indicates minimal context similarities, while a higher percentage implies significant overlap. "
+                            f"You're not required to explain the percentage separately; it should reflect your analysis directly.")
 
         print("Message Body: ", message_body)
 
@@ -252,7 +253,7 @@ class PAT:
         - int: The context similarity percentage if available, else None.
         """
         # Define a regular expression pattern to extract the context similarity percentage
-        percentage_pattern = r'3. Context Similarity Percentage:\s*\n*([^%]+)%?'
+        percentage_pattern = r'3\. Context Similarity Percentage:[\s#*]*\n*([^%]+)%?'
 
         # Search for the percentage pattern in the message
         match = re.search(percentage_pattern, message)
