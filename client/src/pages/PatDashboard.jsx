@@ -40,9 +40,14 @@ const Dash = () => {
             setIsLoading(true);
             await uploadPatent([selectedFile]);
             let percentage = await comparePatents();
-            setSyntaxPercentage(percentage);
+            if(percentage === null){
+                setSyntaxPercentage(0);
+            }
+            else{
+                setSyntaxPercentage(percentage)
+            }
             const response = await retrievePatents();
-            if (response.ok) {
+            if (response && response.ok) {
                 const blob = await response.blob();
                 const zipFile = new File([blob], 'patents.zip', { type: 'application/zip' });
                 const patents = await unzipFile(zipFile);
@@ -50,47 +55,61 @@ const Dash = () => {
                 const names = patents.map(patent => patent.name);
                 let name1 = names[1]
                 setFoundSimilarPatent(name1)
+                await removeZipFile();
+                await startChat();
+                const { text, contextPercentage } = await sendMessage("Started Conversation from Compare with percentage", percentage);
+                console.log("Message", text);
+                if(contextPercentage === null){
+                    setContextPercentage(0)
+                }
+                else{
+                    setContextPercentage(contextPercentage);
+                }
+                setIsLoading(false);
+                setText(text)
             } else {
-                console.error('Failed to retrieve patents:', response.statusText);
+                console.error('Failed to retrieve patents');
             }
-            await removeZipFile();
-            await startChat();
-            const { text, contextPercentage } = await sendMessage("Started Conversation from Compare with percentage", percentage);
-            console.log("Message", text);
-            setContextPercentage(contextPercentage);
-            setIsLoading(false);
             // compare_message(text);
-            setText(text)
-            let names = patents.map(patent => patent.name);
-
+            setIsLoading(false);
         } else {
             console.error("No file selected");
         }
     };
 
     const handleDirectCompare = async ()=> {
-        console.log("Selected Files: ", [selectedFile, selectDirectFile])
-        setIsLoading(true)
-        await uploadPatent([selectedFile, selectDirectFile]);
-        let percentage = await comparePatents(true);
-        setSyntaxPercentage(percentage)
-        const response = await retrievePatents();
-        if (response.ok) {
-            const blob = await response.blob();
-            const zipFile = new File([blob], 'patents.zip', { type: 'application/zip' });
-            const patents = await unzipFile(zipFile);
-            setPatents(patents);
-        } else {
-            console.error('Failed to retrieve patents:', response.statusText);
+        if (selectDirectFile) {
+            console.log("Selected Files: ", [selectedFile, selectDirectFile])
+            setIsLoading(true)
+            await uploadPatent([selectedFile, selectDirectFile]);
+            let percentage = await comparePatents(true);
+            setSyntaxPercentage(percentage)
+            const response = await retrievePatents();
+            if (response && response.ok) {
+                const blob = await response.blob();
+                const zipFile = new File([blob], 'patents.zip', { type: 'application/zip' });
+                const patents = await unzipFile(zipFile);
+                setPatents(patents);
+                await removeZipFile();
+                await startChat();
+                const { text, contextPercentage } = await sendMessage("Started Conversation from Compare with percentage", percentage);
+                console.log("Message", text);
+                if(contextPercentage === null){
+                    setContextPercentage(0)
+                }
+                else{
+                    setContextPercentage(contextPercentage);
+                }
+                setText(text);
+                setFoundSimilarPatent(selectDirectFile.name);
+            } else {
+                console.error('Failed to retrieve patents:');
+            }
+            setIsLoading(false);
         }
-        await removeZipFile();
-        await startChat();
-        const { text, contextPercentage } = await sendMessage("Started Conversation from Compare with percentage", percentage);
-        console.log("Message", text);
-        setContextPercentage(contextPercentage);
-        setText(text);
-        setIsLoading(false);
-        setFoundSimilarPatent(selectDirectFile.name);
+        else {
+            console.error("No direct compare file selected")
+        }
 
     }
 

@@ -3,6 +3,11 @@ import JSZip from "jszip";
 let chatMessages = []; // State to hold chat messages
 
 
+/**
+ * Format a file path into a File object.
+ * @param {string} filePath - The path of the file to format.
+ * @returns {Promise<File>} A promise that resolves with the formatted File object.
+ */
 export const formatPlaceholder = async (filePath) => {
     return new Promise((resolve, reject) => {
         // Create a new FileReader instance
@@ -36,7 +41,11 @@ export const formatPlaceholder = async (filePath) => {
     });
 };
 
-
+/**
+ * Extract files from a ZIP file.
+ * @param {Blob} zipFile - The ZIP file to extract files from.
+ * @returns {Promise<File[]>} A promise that resolves with an array of extracted File objects.
+ */
 export const unzipFile = async (zipFile) => {
     const zip = await JSZip.loadAsync(zipFile);
     const patents = [];
@@ -53,6 +62,10 @@ export const unzipFile = async (zipFile) => {
     return patents;
 };
 
+/**
+ * Remove a ZIP file from the server.
+ * @returns {Promise<void>} A promise that resolves when the ZIP file is successfully removed.
+ * */
 export const removeZipFile = async () => {
     try{
         const response = await fetch('http://localhost:5000/remove_zipfile', {
@@ -73,23 +86,10 @@ export const removeZipFile = async () => {
     }
 }
 
-// Function to handle form submission
-export const handleSubmit = async (event) => {
-    event.preventDefault();
-    const fileInput = document.querySelector('input[type="file"]');
-    if (!fileInput.files || !fileInput.files[0]) {
-        console.error('No file selected');
-        return;
-    }
-
-    const file = fileInput.files[0];
-    try {
-        await uploadPatent(file);
-    } catch (error) {
-        console.error('Error uploading file:', error);
-    }
-};
-
+/**
+ * Upload patent files to the server.
+ * @param {FileList} files - The list of patent files to upload.
+ */
 export const uploadPatent = async (files) => {
     try {
         console.log("Files:", files);
@@ -130,7 +130,11 @@ export const uploadPatent = async (files) => {
     }
 };
 
-
+/**
+ * Compare patents on the server.
+ * @param {boolean} [directComparison=false] - Flag indicating whether to directly compare patents.
+ * @returns {Promise<number|null>} A promise that resolves with the similarity percentage, or null if comparison fails.
+ */
 export const comparePatents = async (directComparison = false) => {
     try {
         // Make a GET request to the Flask route
@@ -163,6 +167,10 @@ export const comparePatents = async (directComparison = false) => {
     }
 };
 
+/**
+ * Retrieve patents from the server.
+ * @returns {Promise<Response|null>} A promise that resolves with the response containing patents, or null if retrieval fails.
+ */
 export const retrievePatents = async () => {
     try {
         const response = await fetch('http://localhost:5000/retrieve_patents', {
@@ -172,10 +180,10 @@ export const retrievePatents = async () => {
             }
         });
 
-        if (response.ok) {
+        if (response && response.ok) {
             return response
         } else {
-            console.error('Failed to retrieve patents:', response.statusText);
+            console.error('Failed to retrieve patents');
             // If an error occurs, you might want to return a default value or handle the error differently
             return null;
         }
@@ -185,15 +193,18 @@ export const retrievePatents = async () => {
     }
 };
 
-
+/**
+ * Start a chat session with the server.
+ * @returns {Promise<void>} A promise that resolves when the chat session is started.
+ */
 export const startChat = async () => {
     try {
         console.log("Chat started");
         const response = await fetch('http://localhost:5000/start_chat');
-        if (response.ok) {
+        if (response && response.ok) {
             console.log("Chat started successfully");
         } else {
-            console.error("Error starting chat:", response.statusText);
+            console.error("Error starting chat");
         }
     } catch (error) {
         console.error("Error starting chat:", error);
@@ -297,7 +308,7 @@ export const sendMessage = async (message, percentage = null) => {
                 body: JSON.stringify(requestBody) // Send the message and percentage in JSON format if percentage is provided
             });
 
-            if (response.ok) {
+            if (response && response.ok) {
                 // Extract the response data as JSON
                 const data = await response.json();
                 const responseData = { text: data.text, context_percentage: data.context_percentage };

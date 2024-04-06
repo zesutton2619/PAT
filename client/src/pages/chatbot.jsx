@@ -1,16 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {sendMessage} from "../apiFunctions";
+import { sendMessage } from "../apiFunctions";
 import './../style/chat.css'; // Import CSS file for styling
 import robotIcon from "../images/robot-solid.svg";
 import "./PatDashboard"
 import chatIcon from "../images/comment-solid.svg";
 
 
-const Chat = ({botMessage}) => {
+const Chat = ({ botMessage }) => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
+    const chatContainerRef = useRef(null);
     const initialBotMessageSent = useRef(false);
 
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            // Scroll to bottom
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+    }, [messages]); // Only re-run effect when messages change
 
     useEffect(() => {
         if (!initialBotMessageSent.current) {
@@ -19,7 +26,14 @@ const Chat = ({botMessage}) => {
         } else if (botMessage) {
             setMessages(prevMessages => [...prevMessages, { text: botMessage, sender: 'bot', avatar: 'bot-avatar.png' }]);
         }
-    }, [botMessage]);
+    }, [botMessage]); // Only re-run effect if botMessage changes
+
+
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            handleMessageSend();
+        }
+    };
 
     const handleMessageSend = async () => {
         if (newMessage.trim() === '') return;
@@ -27,7 +41,7 @@ const Chat = ({botMessage}) => {
         setNewMessage('');
 
         // Simulate typing indicator
-        setMessages(prevMessages => [...prevMessages, { text: '...', sender: 'bot', typing: true }]);
+        setMessages(prevMessages => [...prevMessages, { text: '...', sender: 'bot', avatar: 'bot-avatar.png', typing: true }]);
 
         const { text, contextPercentage } = await sendMessage(newMessage);
 
@@ -47,9 +61,12 @@ const Chat = ({botMessage}) => {
             style={{height: '42rem'}}>
             <div className="chat-header">
                 Talk to PAT
-                <hr className="header-divider" />
+                <img src={chatIcon} className="inline-block h-6 mb-5 w-6  ml-2"/>
+                <hr className="header-divider"/>
             </div>
-            <div className="flex flex-col h-full overflow-y-auto">
+
+
+            <div ref={chatContainerRef} className="flex flex-col h-full overflow-y-auto">
                 {messages.map((message, index) => (
                     <div key={index} className={`message ${message.sender === 'user' ? 'user' : 'bot'}`}>
                         {message.sender === 'bot' && message.avatar && (
@@ -64,6 +81,7 @@ const Chat = ({botMessage}) => {
                     type="text"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyDown={handleKeyPress}
                     className="flex-grow px-2 py-1 rounded-l-md border border-gray-300 focus:outline-none"
                     placeholder="Type a message..."
                 />
