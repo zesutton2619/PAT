@@ -20,9 +20,8 @@ pat_chat = PAT()
 # Define allowed file extensions and maximum file size
 ALLOWED_EXTENSIONS = {'pdf'}
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB
-patent_files = os.environ.get("PATENT_FILES")
 
-directory_to_watch = os.path.abspath(patent_files)  # Change this to your directory
+directory_to_watch = os.path.abspath('Patents/Utility Patents')  # Change this to your directory
 
 
 class DirectoryWatchHandler(FileSystemEventHandler):
