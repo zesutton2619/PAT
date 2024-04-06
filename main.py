@@ -1,15 +1,16 @@
 import os
 import time
 import zipfile
-
 from bleach import clean
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from sklearn.metrics.pairwise import cosine_similarity
-
 from pat import PAT
 from patentProcessing import PatentProcessor
 from encryption import encrypt_file, decrypt_file
+import json
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -20,6 +21,13 @@ pat_chat = PAT()
 ALLOWED_EXTENSIONS = {'pdf'}
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB
 
+directory_to_watch = os.path.abspath("C:\\Users\\ph-mo\\OneDrive\\Desktop\\patBackend-2.0\\Patents\\Utility Patents")  # Change this to your directory
+
+class DirectoryWatchHandler(FileSystemEventHandler):
+    def on_any_event(self, event):
+        print(f"Event triggered: {event}")  # Debugging line
+        print("Updating files list...")  # Debugging line
+        update_files_json()
 
 # Function to check if the file extension is allowed
 def allowed_file(filename):
@@ -35,6 +43,27 @@ def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
+def update_files_json(directory_to_watch):
+    print("Updating File list")
+    try:
+        print("Reading Directory")
+        all_files = []
+        # Use os.walk to iterate through each directory and subdirectory
+        for root, dirs, files in os.walk(directory_to_watch):
+            # Combine the directory path with each filename to get the full path
+            #full_paths = [os.path.join(root, name) for name in files]
+            all_files.extend(files)
+
+        # Optionally, sort files alphabetically; adjust as needed
+        all_files.sort()
+
+        print("Writing Directory into file")
+        with open('files.json', 'w') as f:
+            json.dump(all_files, f, indent=2)
+        print("Files list updated in files.json")
+    except Exception as e:
+        print(f"Error updating the files list: {e}")
 
 @app.route('/retrieve_patents', methods=['GET'])
 def retrieve_patents():
@@ -291,6 +320,107 @@ def send_message():
     # Return both the response and context percentage
     return jsonify({'text': response, 'context_percentage': context_percentage}), 200
 
+@app.route('/files', methods=['GET'])
+def get_files():
+    print("Sending file json to list component")
+    try:
+        with open('files.json', 'r') as f:
+            files = json.load(f)
+        return jsonify(files)
+    except FileNotFoundError:
+        return jsonify({"error": "folders.json not found"}), 404
+
+
+@app.route('/retrieve_single_PDF', methods=['POST'])
+def get_pdf():
+    """
+        Retrieve patent and send file.
+
+        Returns:
+        file: A pdf file containing the patent.
+    """
+    print("sending pdf")
+    try:
+        # Get the filenames of the PDF files from pat_chat.patent_file_names
+        filename = request.json['filename']
+        print("retrieve filename: ", filename)
+
+        if not filename:
+            return "No filename provided", 400
+
+        # Initialize a list to store the file paths
+
+        # Construct the full paths to the PDF files
+        file_path = os.path.join(os.getcwd(), 'Patents/Utility Patents', filename)  # Assuming filename contains the relative path
+        decrypt_file(file_path)
+        print("retrieve file_path: ", file_path)
+        if not os.path.exists(file_path):
+            return f"File '{filename}' not found", 404
+
+        # Create a zip file containing PDF file
+        zip_filename = "patent_file.zip"
+        with zipfile.ZipFile(zip_filename, 'w', compression=zipfile.ZIP_STORED) as zipf:
+            zipf.write(file_path, os.path.basename(file_path))
+            encrypt_file(file_path)
+
+        # Send the zip file as an attachment
+        return send_file(zip_filename, as_attachment=True, mimetype='application/zip')
+
+    except Exception as e:
+        print(str(e))
+        return str(e), 500
+
+
+@app.route('/add_patent', methods=['POST'])
+def add_patent():
+    """
+    Add a patent file.
+
+    Returns:
+    str: Success message if the file is uploaded successfully, otherwise an error message.
+    """
+
+    files = []
+    for key, file in request.files.items():
+        if key.startswith('file'):
+            files.append(file)
+
+    if not files:
+        print("No files received")
+        return 'No files received', 400
+
+    elif len(files) == 1:
+        file = files[0]
+        if file.filename == '':
+            print('No selected file')
+            return 'No selected file', 400
+
+        if file and allowed_file(file.filename):
+            if file.content_length > MAX_CONTENT_LENGTH:
+                print('File size exceeds maximum limit')
+                return 'File size exceeds maximum limit', 400
+            filepath = os.path.join('Patents/Utility Patents', file.filename)
+            file.save(filepath)
+            encrypt_file(filepath)
+
+            return 'File uploaded successfully', 200
+
+        else:
+            print('Invalid file type')
+            return 'Invalid file type', 400
+
+
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    print("I am here")
+    update_files_json(directory_to_watch)
+    event_handler = DirectoryWatchHandler()
+    observer = Observer()
+    observer.schedule(event_handler, directory_to_watch, recursive=True)
+    observer.start()
+
+    try:
+        app.run(debug=True, use_reloader=False)  # use_reloader=False to prevent duplicate watchers
+    except KeyboardInterrupt:
+        observer.stop()
+    observer.join()

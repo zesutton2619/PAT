@@ -29,6 +29,8 @@ def encrypt_file(file_path):
         file.write(encrypted_text)
 
 
+
+
 def decrypt_file(file_path):
     """
     Decrypts a file previously encrypted with Fernet symmetric encryption.
@@ -49,3 +51,6 @@ def decrypt_file(file_path):
     # Write the decoded data back to the file
     with open(file_path, 'wb') as file:
         file.write(decrypted_text_decoded)
+
+
+
