@@ -45,7 +45,9 @@ Refer to: https://github.com/zesutton2619/PAT/wiki/Patent-AI-Technology-React-Ap
 ### Docker
 1. Clone the repository
 2. CD to repository
-3. docker compose up --build
+3. CD to PAT Server
+4. Change Dockerfile ENV variables
+5. docker compose up --build
 
 ## Development
 
