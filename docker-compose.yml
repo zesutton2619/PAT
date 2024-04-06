@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  frontend:
+    build: ./PAT React App
+    ports:
+      - "3000:3000"
+    networks:
+      - frontend_network
+    depends_on:
+      - backend
+
+  backend:
+    build: ./PAT Server
+    ports:
+      - "5000:5000"
+    networks:
+      - backend_network
+
+networks:
+  frontend_network:
+  backend_network:
