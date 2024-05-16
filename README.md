@@ -30,7 +30,7 @@ The patents inside the server can be displayed to manage the patent as well as a
 Team Name: Night Owl
 * Paulo Drefahl - Full Stack Developer
 * Zach Sutton - Full Stack Developer
-* Greggory Bateham - Front End Developer
+* Gregory Bateham - Front End Developer
 * Kevin Kostage - Full Stack Developer
 
 # Local Setup
