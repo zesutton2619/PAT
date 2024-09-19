@@ -1,113 +1,134 @@
-# PAT
+# Patent AI Technology (PAT)
+PAT is an advanced AI-powered tool designed to revolutionize patent analysis for attorneys and legal professionals. By leveraging cutting-edge algorithms and machine learning techniques, PAT provides comprehensive similarity assessments between patents, highlighting potential overlaps and infringements. With its intuitive interface and powerful backend, PAT streamlines the patent comparison process, offering detailed reports and AI-powered explanations.
+
+## **Live Demo:**
+
+\[![Watch the demo video](https://img.youtube.com/vi/JKMDyak8ET0/0.jpg)]  
+
+(https://www.youtube.com/watch?v=JKMDyak8ET0)
+
+## Table of Contents
+- [Features](#features)
+- [Comparison Types](#comparison-types)
+- [Comparison Algorithms](#comparison-algorithms)
+- [Team Contributors and Roles](#team-contributors-and-roles)
+- [Local Setup](#local-setup)
+- [Tech Stack](#tech-stack)
+- [Security](#security)
+- [CI/CD Pipeline](#cicd-pipeline)
+- [Privacy Policy](#privacy-policy)
+- [Contact Us](#contact-us)
 
 ## Features
 
-### Input Patent
+1. **Input Patent**
+   * Users can upload patents via the website to initiate comparisons.
 
-The Patent that will be compared to the other patents stored can be inputted from the website.
+2. **Patent Comparison Metrics**
+   * PAT provides a detailed, visually intuitive report on the text and context similarity scores between patents to help assess patent infringement risks.
 
-### Patent Comparison Metrics to Measure Similarity
+3. **Chatbot Functionality**
+   * PAT includes a chatbot, powered by OpenAI, that explains the comparison results. The chatbot breaks down the similarities between patents, making it easier to understand potential overlap and infringement.
 
-The text and context similarity scores are displayed in a visually appealing manner to determine patent infringement.
+4. **Patent Comparison Viewer**
+   * Users can view the compared patents side-by-side for manual inspection.
 
-### Chatbot functionality
+5. **Patent Comparison Database**
+   * PAT includes a local database where users can upload and manage patents that the system compares against the input patent.
 
-The explaination of the text and context similarity score is made with an OpenAI API and the bot is displayed and interacted with a message and text box which explains the similarity and possible infringement between the compared patents.
+6. **Patent Viewer/Manager**
+   * PAT also allows users to manage the patents stored on the server, adding or removing documents for comparison.
 
-### Patent Comparison Viewer
+## Comparison Types
 
-The compared patents are displayed in-page for ease of manual comparison between the patents.
+PAT offers two primary modes of patent comparison:
 
-### Patent Comparison Database
+1. **Direct Compare**
+   * This mode allows users to compare two specific patents against each other.
+   * Ideal for focused analysis when investigating potential infringement between known patents.
+   * Provides a detailed breakdown of similarities in syntax and context between the two documents.
 
-Patents to be compared with the Inputted patent are stored in the server so the user can add adjust the patents that the inputted patents can be compared to.
+2. **General Compare**
+   * This mode compares an input patent against the entire database of stored patents.
+   * Useful for broad searches to identify potential infringements or similar patents across a large corpus.
+   * Results are ranked by similarity, allowing users to quickly identify the most relevant matches.
 
-### Patent Viewer / Manager
+Both comparison types utilize the same underlying algorithms for syntax and context analysis, ensuring consistent and reliable results regardless of the comparison mode chosen.
 
-The patents inside the server can be displayed to manage the patent as well as an option to add more patents to compare towards the inputted patent to be compared.
+## Comparison Algorithms
+
+PAT employs a two-pronged approach to patent comparison, combining syntactic and contextual analysis:
+
+1. **Syntax Comparison**
+   * Utilizes advanced text processing techniques to analyze the structural similarities between patents.
+   * **Cosine Similarity**: This algorithm compares the word vectors of patents, providing a numerical measure of textual similarity regardless of document length.
+   * **TF-IDF (Term Frequency-Inverse Document Frequency)**: Used in conjunction with cosine similarity to weight the importance of words based on their frequency in the document and rarity across the patent corpus.
+
+2. **Contextual Comparison**
+   * Leverages state-of-the-art Language Models (LLMs) to understand the semantic meaning and context of patent language.
+   * Using a local LLM for more security and privacy with the desktop version and an OpenAI API service for the web version. 
+   * **Sentence Transformers**: Used to compute semantic similarity between patent sections, identifying conceptual overlaps that might not be apparent from syntax alone.
+
+The combination of these approaches allows PAT to provide a comprehensive similarity analysis, capturing both the literal and conceptual similarities between patents.
 
 ## Team Contributors and Roles
-Team Name: Night Owl
-* Paulo Drefahl - Full Stack Developer
-* Zach Sutton - Full Stack Developer
-* Gregory Bateham - Front End Developer
-* Kevin Kostage - Full Stack Developer
 
-# Local Setup
+**Team Name:** Night Owl
+
+* **Paulo Drefahl** – Full Stack Developer
+* **Zach Sutton** – Full Stack Developer
+* **Gregory Bateham** – Front End Developer
+* **Kevin Kostage** – Full Stack Developer
+
+## Local Setup
+
 ### Backend Setup:
-
-Refer to: https://github.com/zesutton2619/PAT/wiki/Patent-AI-Technology-(PAT)-API-Documentation
+Refer to: [PAT API Documentation]
 
 ### Frontend Setup:
+Refer to: [PAT React App Documentation]
 
-Refer to: https://github.com/zesutton2619/PAT/wiki/Patent-AI-Technology-React-App
-
-### Docker
+### Docker Setup:
 1. Clone the repository
-2. CD to repository
-3. CD to PAT Server
-4. Change Dockerfile ENV variables
-5. docker compose up --build
+2. Navigate to the repository: `cd <repo>`
+3. Navigate to PAT Server: `cd PAT-Server`
+4. Update the Dockerfile environment variables
+5. Build and start Docker: `docker compose up --build`
 
-## Development
+## Tech Stack
 
-Frontend:
-Adding additional Frontend interaction functions or fetches will be seemlessly added to the page when the changes are saved to the file.
-
-Backend:
-Adding additional Backend functions or routes will be seemlessly added to the server when restarted.
-
-# Tech Stack
-
-* HTML
-* Tailwind
-* JS
-* Python
-* React
-* Node.js
-* Flask
-* Docker
-
-
-## Other Resources
-
-* Canva
-* OpenAI API
+* **Frontend**: HTML, Tailwind CSS, React, JS
+* **Backend**: Python, Flask, Node.js
+* **Deployment**: Docker, AWS
+* **Additional Tools**: OpenAI API, Canva
+* **Machine Learning**: TensorFlow, PyTorch, Hugging Face Transformers
 
 ## Security
 
-Cross-Site Scripting (XSS) is a common security vulnerability found in web applications. It allows attackers to inject malicious scripts into content viewed by other users. For PAT, mitigating XSS risks involves implementing robust input validation and output encoding mechanisms. This ensures that any data entered by users, whether in the form of patent information or comparison queries, is sanitized before being processed or displayed. Employing Content Security Policy (CSP) headers can also significantly reduce the impact of any potential XSS attacks by restricting the sources from which scripts can be executed.
+**Cross-Site Scripting (XSS) Prevention:**
+* PAT mitigates XSS risks by implementing input validation and output encoding. A Content Security Policy (CSP) is used to restrict the execution of scripts from untrusted sources.
 
-### Data Security
+**Data Security:**
+* PAT uses AES-128 encryption to ensure the security of all patents stored on the server.
 
-Data Security is ensured through the use of AES 128 encryption.
+## CI/CD Pipeline
 
-## Sustainability
-
-PAT helps patent lawyers save non-renewable resources such as paper, electricity, and man hours when reviewing patents by saving time and direct resources.
-
-## CI/CD Pipeline for Docker
-
-## Deployment for Server
-
-### How Docker Deployment Works:
+* Docker is used to automate and streamline the deployment of PAT's backend and frontend services.
 
 ## Privacy Policy
 
 ### Information Collection and Use
-
-The Patents uploaded to be compared are not stored.
-
-The Patents stored in the server are encrypted.
+* PAT does not store any uploaded patents permanently.
+* Any patents stored in the server are encrypted.
 
 ### Third-Party Services
+* PAT leverages the OpenAI API for sophisticated language processing to compare patents and explain similarity scores.
 
-The integration of OpenAI API highlights PAT's reliance on cutting-edge language processing capabilities to analyze patents. This API provides access to powerful models capable of understanding and generating human-like text, which PAT leverages to compare patents and explain the similarity scores. The usage of a third-party service like OpenAI API allows PAT to offer sophisticated explanations and insights that would be challenging to achieve with traditional programming methods alone. However, this also means that PAT must adhere to the terms of service and privacy policies set forth by OpenAI, ensuring that data shared through this API is handled responsibly.
+### Changes to this Policy
+* We reserve the right to update the privacy policy at any time. Users are encouraged to review the policy periodically.
 
-### Changes to this Privacy Policy
+## Story of PAT
+PAT was inspired by Arthrex, a world-renowned company specializing in medical prostheses and patents within the medical field. They sought a patent comparison software that could function both as a web service and locally. By understanding and addressing their needs, our team developed a solution in just one week, earning us second place in the hackathon, where we competed against numerous other innovative projects.
 
-Rights are Reserved to the Owners to update or change Privacy Policy of the product at any time. Any changes to the Privacy Policy will be reflected on this page. Users are recommended to check this page periodically for updates.
-
-### Contact Us
-
-If you have any questions or concerns about our Privacy Policy or PAT, please contact us at eaglehacks24@gmail.com
+## Contact Us
+For any inquiries regarding PAT or the privacy policy, contact us. 
