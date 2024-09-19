@@ -3,9 +3,7 @@ PAT is an advanced AI-powered tool designed to revolutionize patent analysis for
 
 ## **Live Demo:**
 
-\[![Watch the demo video](https://img.youtube.com/vi/JKMDyak8ET0/0.jpg)]  
-
-(https://www.youtube.com/watch?v=JKMDyak8ET0)
+[![Watch the demo](https://img.youtube.com/vi/JKMDyak8ET0/0.jpg)](https://www.youtube.com/watch?v=JKMDyak8ET0)
 
 ## Table of Contents
 - [Features](#features)
